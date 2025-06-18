@@ -2,9 +2,34 @@
 
 A collection of tutorials to help with the onboarding process for the embedded systems teams.
 
-This onboarding tutorial as a whole serves to familiarize new and prospective memebers to the tools and skills the embedded teams use on a daily basis. Nearly all of the concepts in here are something a member should be able to understand to be a successful member on the team.
+This onboarding tutorial serves to familiarize new members to the tools and skills the embedded teams use on a daily basis.
 
-### Author: WK
+Nearly all of the concepts in here are something a member should be able to understand to be a successful member on the team.
+
+## Notice
+
+This tutorial set assumes a \*NIX environment (operating system). This includes:
+
+- macOS (this tutorial was developed on macOS)
+- all Linux distributions which includes but is not limited to
+
+  - Arch
+  - Ubuntu
+  - Debian
+
+- freeBSD and openBSD
+
+All further instructions are written under the assumption that your environment is [POSIX compliant](https://stackoverflow.com/questions/1780599/what-is-the-meaning-of-posix).
+
+If you're using Windows, you'll need a compatible environment to follow along effectively. I recommend one of the following:
+
+1. Windows Subsystem for Linux (WSL) – Provides a native Linux environment on Windows. Suitable for most development workflows.
+
+2. Virtual Machine (VM) – Run a Linux distribution using software such as VirtualBox or VMware.
+
+3. Dual Boot Setup – Install Linux alongside Windows and choose your operating system at startup.
+
+You can read more [here](https://github.com/DallasFormulaRacing/embedded-onboarding/wiki/DEnvironment).
 
 ## Table of Contents
 
@@ -17,13 +42,5 @@ This onboarding tutorial as a whole serves to familiarize new and prospective me
 | 04      | Peripherals and Protocols      | ++         | Interfacing with external modules. Know and understand CAN, I2C, SPI, GPIO. Know how to utilize DMA. Using the STM32 HAL to interface with peripherals.                                                                                |
 | 05      | Hardware and Signal Processing | ++++       | Analog and digital signals and converting between the two. Basics of EMI mitigation. Signal processing and filtering basics. Introduction to filtering. CMSIS libraries. Debugging with JTAG and OpenOCD. Creating the IOC and pinout. |
 | 06      | Final Project                  | +++        | Create a rudimentary data acquisition system; no hardware design required. Send information with print over UART.                                                                                                                      |
-
-## Contributing
-
-For minor issues: unless absolutely critical, please make an issue.
-
-For suggestions: make an issue. If you have already developed your suggestion and wish to integrate it, make a pull request on an appropriately named branch pointing to main.
-
-For major issues: DM.
 
 ## References

@@ -16,13 +16,27 @@ To be clear, a shell is a command interpreter and a terminal is the application 
 
 Understanding the shell is critical because many of the tools we’ll use in embedded development, like Git, compilers, and debugging utilities, are run from the command line.
 
-The most basic shell commands involve navigating your directory. The root directory is the top-level folder in a computer's file system, denoted as `~`. `pwd` for print working directory, `cd` for change directory, `mkdir` to make directory. `rm` for removing files or directories.
+The most basic shell commands involve navigating your directory. The root directory is the top-level folder in a computer's file system, denoted as `/`.
 
-All shell commands follow a similar structure: `<utility> <flags> <arguments>`. For example, if I wanted to switch to my root directory and create a text file named `bat.txt`, I would run `cd ~` and then `touch bat.txt`.
+Your home directory is `~`. Use `pwd` for print working directory, `cd` for change directory, `mkdir` to make directory.
+
+`rm` for removing files or directories; the flags/args for `rm` can be `-r` for recursive and `-f` for force. Using `rm -rf` (you can combine flags like this) will recursively force delete a file directory.
+
+The superuser is admin-privilege special user that has **all rights and permissions** to **all files and programs** in **all modes**. Essentially, they can do anything. You can temporarily invoke this level of privilege by prepending `sudo` to your command.
+
+Thus, by logical deduction, the command below will delete every file and program on your computer, essentially [bricking it](<https://en.wikipedia.org/wiki/Brick_(electronics)>).
+
+```
+# DO NOT RUN THIS COMMAND
+sudo rm -rf /
+# DO NOT RUN THIS COMMAND
+```
+
+All shell commands follow a similar structure: `<utility> <flags> <arguments>`. For example, if I wanted to switch to my home directory and create a text file named `bat.txt`, I would run `cd ~` and then `touch bat.txt`.
 
 We can also download software using the shell.
 
-> Try: Open a terminal window and enter `~` then `pwd`.
+> Try: Open a terminal window and enter `cd ~` then `pwd`.
 
 This will navigate you to your home directory.
 
@@ -52,7 +66,7 @@ Piping lets you take the output of one command and pass it as input to another.
 
 It looks like this: `command1 | command2`.
 
-An common example of piping is looking for for error logs in system logs:
+A common example of piping is looking for error logs in system logs:
 
 `cat system.log | grep "error"`.
 
@@ -66,7 +80,7 @@ This is very useful for reading outputs to comb through errors and messages.
 
 As developers, we often collaborate on giant, complex projects that involve all kinds of firmware, configurations and documentation. To manage changes efficiently, we use a version control software. The most popular one out there is called **Git**.
 
-To avoid the common misconception: the **[Git](https://git-scm.com/)** software is _hosted_ on [GitHub](https://github.com/). The same way videos are hosted on YouTube.
+To avoid the common misconception: **[Git](https://git-scm.com/)** services are _hosted_ on [GitHub](https://github.com/). The same way videos are hosted on YouTube. Git runs locally on your machine.
 
 Git, and version control software (VCS) in general, allows developers to:
 
@@ -74,10 +88,10 @@ Git, and version control software (VCS) in general, allows developers to:
 - see who made what changes and when
 - work on new, experimental features outside of the main codebase
 - collaborate without writing over others' work
-- check if things work before [pushing to production](https://en.wikipedia.org/wiki/2024_CrowdStrike-related_IT_outages)
+- check if things work before [pushing to production](https://about.gitlab.com/blog/gitlab-dot-com-database-incident/)
 - and other quality of life features that makes developing not unbearable
 
-In a way, git gives us embedded developers a safety net, where one bad line of code can (actually and literally) [blow something up](https://en.wikipedia.org/wiki/Ariane_flight_V88). Bad firmware has been responsible [for a lot](https://en.wikipedia.org/wiki/Therac-25#Root_causes).
+In a way, git gives us embedded developers a safety net, where one bad line of code can (actually and literally) [blow something up](https://en.wikipedia.org/wiki/Ariane_flight_V88). Bad firmware has been responsible [for a lot](https://en.wikipedia.org/wiki/Therac-25#Root_causes) of mess ups.
 
 ---
 
@@ -86,7 +100,7 @@ Git ensures that every change is tracked, reversible, and reviewable. With that 
 | Command                   | What It Does                                                                 |
 | ------------------------- | ---------------------------------------------------------------------------- |
 | `git init`                | Starts a new Git repository in your current directory                        |
-| `git clone <repo>`        | Copies a remote repository (e.g., from GitHub) to your local machine         |
+| `git clone <repo link>`   | Copies a remote repository (e.g., from GitHub) to your local machine         |
 | `git status`              | Shows the current state of your working directory and staged files           |
 | `git add <file>`          | Stages a file (or `.` for all files) for commit                              |
 | `git commit -m "message"` | Saves a snapshot of your staged changes with a message describing the change |
