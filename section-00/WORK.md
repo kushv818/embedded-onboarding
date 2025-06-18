@@ -36,13 +36,13 @@ Run `git remote -v` in the directory. You should get links to repositories that 
 
 ### -> TO DO <-
 
-1\. Use your terminal skills and create a file called `submit.md` inside the `section-00` folder (if youre not reading this on github.com, you're in it already).
+1\. Use your terminal skills and create a file called `submit.md` **inside** the `section-00` folder (if youre not reading this on github.com, you're in it already).
 
 2\. Inside that file `submit.md` answer the following questions:
 
 - Run a command line terminal that does both of the following:
-  - 1. lists **all** files in that directory **and**
-  - 2. only prints files that match the expression `\.git`.
+  - lists **all** files in that directory **and**
+  - only prints files that match the expression `\.git`.
 - What command did you run?
 
 - After running that command, you should see 3 files. What 3 files do you see?
