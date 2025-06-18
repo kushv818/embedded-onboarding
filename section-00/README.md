@@ -2,11 +2,15 @@
 
 # Reading for section 00
 
-## Concept 1: What is an embedded system?
+## Concept 1: Introduction to Embedded Systems
 
-An embedded system is a specialized computer system—a combination of a computer processor, computer memory, and input/output peripheral devices—that has a dedicated function within a larger mechanical or electronic system.
+An embedded system is a specialized computer system. A combination of a computer processor, computer memory, and input/output peripheral devices that has a dedicated function within a larger mechanical or electronic system.
 
 In our case within Dallas Formula Racing, this can be anything, from the dashboard display, data acquistition system, battery management system (EV) and many other smaller projects that support our development.
+
+In embedded software development, and unlike ordinary software development, your code doesn’t run on your computer. It runs on a microcontroller instead. This means we’ll write firmware in C or C++ (right now just C), compile it using a toolchain like arm-none-eabi-gcc, and flash it onto the hardware using tools like `st-flash` and `openocd`. We’ll cover this process later, but know that the command line plays a big role here too. \*More on this later.
+
+### What is a microcontroller?
 
 ## Concept 2: Introducing the shell.
 
@@ -111,6 +115,30 @@ Git ensures that every change is tracked, reversible, and reviewable. With that 
 | `git merge <branch>`      | Merges another branch into your current one                                  |
 | `git pull`                | Fetches and merges changes from the remote repository                        |
 | `git push`                | Uploads your commits to the remote repository                                |
+
+## Git Utility Files
+
+Git tracks everything by default, but that doesn't mean it should.
+
+Projects often include a file called .gitignore, which tells Git what not to track. This is where you exclude things like:
+
+- Build artifacts (`/build/`, `*.o`, `*.elf`)
+
+- Logs or temporary files (`*.log`, `*.tmp`)
+
+- System junk (`.DS_Store`, `Thumbs.db`)
+
+- IDE settings (`.vscode/`, `.idea/`)
+
+If you see weird merge conflicts or your repo feels bloated, you probably forgot to ignore something.
+
+Other useful Git utility files include:
+
+- `.gitattributes`: Controls file behavior (e.g., line endings, diff rules)
+
+- `.gitkeep`: A placeholder file to force Git to track an otherwise empty directory (note: it’s just a convention, not a Git feature)
+
+- `.gitconfig`: Your personal Git settings file, usually found in your home directory (~/.gitconfig)
 
 ---
 
