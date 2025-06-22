@@ -1,10 +1,8 @@
 # About
 
-A collection of tutorials to help with the onboarding process for the embedded systems teams.
+A collection of tutorials to help with the onboarding process for the embedded systems teams. The tutorials serve to familiarize new members to the tools and skills the embedded teams use on a daily basis. All of the concepts in here are something a member should be able to understand to be a successful member on the team.
 
-This onboarding tutorial serves to familiarize new members to the tools and skills the embedded teams use on a daily basis.
-
-All of the concepts in here are something a member should be able to understand to be a successful member on the team.
+These were created due to the need for an industry-ready embedded systems tutorial that succinctly provides the necessary context and lays the foundation for systems programming in a sequential and structured manner. They follow a learning progression inspired by Bloom’s Taxonomy, moving from conceptually remembering to understanding to applying, and then, finally, to creating.
 
 ## Disclosure
 
@@ -18,7 +16,7 @@ a) your work is not genuinely yours, or
 
 b) you do not pass a knowledge check at the end, or
 
-c) you demonstrate that you cannot or should not be allowed to operate independently in this team.
+c) you demonstrate that you should not be allowed to operate independently in this team.
 
 ## Notice
 
