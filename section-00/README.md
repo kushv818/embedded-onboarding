@@ -12,6 +12,22 @@ In embedded software development, and unlike ordinary software development, your
 
 ### What is a microcontroller?
 
+A microcontroller is a tiny computer built into a single chip. Unlike the processor in your laptop, a microcontroller is designed to run one specific task, over and over again, without needing an operating system. It includes a processor, memory, and input/output pins all in one package so it can read sensors, control motors, or blink LEDs directly.
+
+What that being said, microcontrollers (MCU) are not very powerful. At least, not compared to the CPUs in your PC and phone. MCUs run at lower clock speeds, have significantly less memory (cache, RAM). This is partially because they are designed to use significantly less power than normal CPUs.
+
+This is not to say that microcontrollers are not capable. Microcontrollers are what power the hidden intelligence in everyday electronics: from your car’s dashboard to your microwave’s timer, and definitely the systems on our Formula SAE cars. Microcontrollers drive things from coffee pots to entire robots. Tesla, DJI (the drone company, also the parent company that runs the Robomaster competition), and a lot of hard drive producers use ST Microelectronics MCUs in their products.
+
+In these tutorials, we will focus specifically on the line of microcontrollers designed by [ST Microelectronics](https://www.st.com/content/st_com/en.html). This is an industry standard line of MCUs and most of the knowledge provided here is very applicable to other MCUs, like Pi, ESP and Arduino.
+
+### MCU vs MPU
+
+You may hear the term microprocessor (MPU) being mixed in with microcontroller in the amateur literature of this field (reddit). To clarify, these are different things.
+
+Broadly speaking, a microprocessor is generally more capable than a microcontroller. Sometimes MPUs need extra peripherals, like external RAM.
+
+[Read this article](https://semiengineering.com/mpu-vs-mcu/) for more information.
+
 ## Concept 2: Introducing the shell.
 
 Before writing code, we need to understand how to interact with our own computer. One of the most fundamental tools is the [shell](<https://en.wikipedia.org/wiki/Shell_(computing)>). Normally, we open an application to use the application software. In this case, the shell allows the user to access and use operating system's services. It's called "shell" because it's the outermost layer around the operating system.
