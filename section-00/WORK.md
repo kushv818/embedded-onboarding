@@ -1,5 +1,7 @@
 # Work for section 00
 
+Estimated completion time: 1 hour.
+
 ## 1. Make a GitHub account if you don't have one.
 
 Use whatever email you prefer. If you lose access to the account and email, your work will be very hard to recover.

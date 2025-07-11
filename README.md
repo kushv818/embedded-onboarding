@@ -35,11 +35,11 @@ All further instructions are written under the assumption that your environment 
 
 If you're using Windows, you'll need a compatible environment to follow along effectively. I recommend one of the following:
 
-1. Windows Subsystem for Linux (WSL) – Provides a native Linux environment on Windows. Suitable for most development workflows.
+1. Using MSYS2's MINGW64 environment: This provides a Unix-like shell for Windows.
 
-2. Virtual Machine (VM) – Run a Linux distribution using software such as VirtualBox or VMware.
+2. Windows Subsystem for Linux (WSL): Provides a native Linux environment on Windows. Suitable for most development workflows.
 
-3. Dual Boot Setup – Install Linux alongside Windows and choose your operating system at startup.
+3. Dual Boot Setup: Install Linux alongside Windows and choose your operating system at startup.
 
 You can read more [here](https://github.com/DallasFormulaRacing/embedded-onboarding/wiki/DEnvironment).
 

@@ -1,6 +1,6 @@
 > Tags: embedded systems, git, github, version control, shell commands
 
-# Reading for section 00
+# Reading for section 00: Intro to Embedded systems, Git, and the shell
 
 ## Concept 1: Introduction to Embedded Systems
 
