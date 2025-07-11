@@ -43,6 +43,8 @@ If you're using Windows, you'll need a compatible environment to follow along ef
 
 You can read more [here](https://github.com/DallasFormulaRacing/embedded-onboarding/wiki/DEnvironment).
 
+You can also see the Windows setup [guide](SETUP.md) I wrote when we migrated from CubeIDE to VSCode.
+
 ## Table of Contents
 
 | Section | Title                          | Difficulty | Learning Outcomes                                                                                                                                                                                                                      |
