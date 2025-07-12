@@ -287,7 +287,7 @@ int main(int argc, char** argv);
 ```
 
 But this one has two stars `char**`.
-If `char*` is an array of chars, it would make sense that `char**` is an array of `char*`.
+If `char*` is an array of `char`, it would make sense that `char**` is an array of `char*`.
 
 In other words, the `char**` you see is an array of strings. More on this later.
 
@@ -316,47 +316,207 @@ Here, we can manually set the size of integers:
 
 A prepended `u` means that it is unsigned. The number that follows is the bitwidth.
 
-So for example, `uint8_t` is an unsigned integer, 8 bits wide. There is another name for this: the `byte`
+So for example, `uint8_t` is a type of unsigned integer, 8 bits wide. There is another name for this: the `byte`.
 
 We use this in embedded software development quite frequently as it allows for control over how much memory is used, as we don't want to give 64 bits to a value we know for a fact will be less than 16, and vice versa. These small optimizations in memory add up, and vice versa, punish performance when we don't.
 
----
+### A Quick Brief on Typedefs
 
-## 5. Functions
+You'll notice that all those `uint8_t`s and all end in `_t`.
 
-### Syntax: return types, arguments
+The `_t` suffix stands for "type", which is a naming convention that the relevant data type is a `typedef`.
 
-### Scope: local vs global
+We sometimes use `typedef` to create custom names for existing types. We do this for readability and if used correctly, simplifies the code as well.
 
-### Declaration vs definition
+```C
+typedef existing_type new_type_name_t;
+```
 
-_Mini-exercise:_
-
----
-
-## 6. Pointers and Memory
-
-### What is a pointer? (Memory address model)
-
-### `*`, `&`, pointer arithmetic
-
-### Arrays vs pointers
-
-### Pointer pitfalls
-
-_Mini-exercise:_ Swap two integers using pointers
+We also use `typedef` when dealing with structs, but we will cover that later.
 
 ---
 
-## 7. Structs and `typedef`
+## 5. Structs, unions, and `typedef`
+
+Structs are user defined data types that are groupings of different types under a single name. Usage in processing hardware registers, sensor data packets and many more cases.
 
 ### Declaring and using structs
+
+Declare a struct like so:
 
 ### Nested structs
 
 ### `typedef` for clean code
 
+### When to use `union`
+
 _Mini-exercise:_ Define a `struct` for sensor data
+
+---
+
+## 6. Functions
+
+One of the most important parts of programming.
+
+### Syntax: return types, arguments
+
+All functions carry the same structure:
+
+```C
+
+<return_type> function_name(arg1_t arg1name, arg2_t arg2name, argn_t argnname);
+
+```
+
+Sometimes, a function might not have a return type, which is typical of functions doing some sort of initialization.
+
+In that case, it will look like:
+
+```C
+void Something_Init(arg1_t arg1name, arg2_t arg2name, argn_t argnname);
+```
+
+In other cases, a function may not take any arguments. That looks like:
+
+```C
+
+<return_type> function_name();
+
+```
+
+Functions can return custom types and take custom types as arguments.
+
+```C
+typedef struct {
+    int rows;
+    int cols;
+    float* data;
+} matrix_t;
+```
+
+```C
+matrix_t matrix_transpose(matrix_t m) {
+    matrix_t mt = create_matrix(m.cols, m.rows); //<- assume this has been implemented
+    if (!t.data) return t;
+
+    for (int i = 0; i < m.rows; ++i) {
+        for (int j = 0; j < m.cols; ++j) {
+            t.data[j * m.rows + i] = m.data[i * m.cols + j];
+        }
+    }
+
+    return mt;
+}
+```
+
+Something to think about: why do you think init functions don't return a OK status?
+
+The answer is that failure is either considered fatal and most of the time very unlikely. If the setup fails, there's no point in handling the error because there's nothing you can do to recover. There are exceptions to this, especially when smaller (i/o peripheral) inits are called.
+
+### Scope: local vs global
+
+In the matrix transpose example above, the `for-loop` counters `i` and `j` are local variables.
+
+```C
+for (int i = 0; i < m.rows; ++i) {
+        for (int j = 0; j < m.cols; ++j) {
+            t.data[j * m.rows + i] = m.data[i * m.cols + j];
+        }
+    }
+```
+
+The variable `j` is not accessible outside of the inner `for-loop` but the variable `i` is accessible within the inner `for-loop`.
+
+Global variables are placed outside of any function and are placed in global memory, not stack memory.
+
+If you define a variable such that:
+
+```C
+int myGlobalVariable = 42;
+
+int main() {...}
+```
+
+then `myGlobalVariable` is accessible by any function in the file.
+
+To extend this even further, one can use the `extern` keyword. This means that a variable was externally defined. If in `animals.c` I write:
+
+```C
+int NUM_DOG = 9;
+```
+
+and in `main.c` I declare:
+
+```C
+extern int NUM_DOG;
+```
+
+then from within `main.c` I can access the variable `NUM_DOG` that was declared in `animals.c`.
+
+A couple caveats to the `extern` keyword: if the variable is defined more than one after `extern` is declared, you will get a linker error.
+
+### Helper functions //TODO
+
+When writing functions, sometimes it's helpful to write smaller, helper functions that do a specific sub task. This is especially useful when the subtask is repetitive.
+
+```C
+typedef struct {
+    int id;
+    double temp_in_celsius;
+    double humidity;
+} temp_sensor_packet_t;
+
+void print_sensor_data(temp_sensor_packet_t* s, int celsius) {
+
+}
+```
+
+When considering whether to write a separate helper function
+
+---
+
+## 7. Pointers and Memory //TODO
+
+Pointers and memory manipulation are one of the most powerful tools that the C language gives us.
+
+It also happens to be one of the most error prone parts of C development.
+
+Unfortunately, as embedded software developers that constantly interface with hardware, this is not something we can avoid.
+
+### Types of memory
+
+C programs typically operate with 4 distinct memory regions.
+
+| Memory Segment  | Purpose                               | Managed By            |
+| --------------- | ------------------------------------- | --------------------- |
+| **Stack**       | Local variables, function calls       | Compiler              |
+| **Heap**        | Dynamically allocated memory          | the user via `malloc` |
+| **Data**        | Global/static initialized variables   | OS/loader             |
+| **BSS**         | Global/static uninitialized variables | OS/loader             |
+| **Text (Code)** | Executable instructions               | OS/loader             |
+
+### What is a pointer?
+
+A pointer is a variable that holds the memory address of another variable. A pointer may store it's own memory address, but this is kind of useless to do.
+
+```C
+int num = 10;
+int* ptr = &num;
+```
+
+In the example above
+
+### `*`, `&`, pointer arithmetic
+
+### Arrays vs pointers
+
+### The Linker
+
+### Types of memory-based errors
+
+### Common mistakes / examples of bad memory management
+
+_Mini-exercise:_ Swap two integers using pointers
 
 ---
 
@@ -388,4 +548,12 @@ _Mini-exercise:_ Simulate an LED toggle register
 
 ## 10. Compilers and Build Systems
 
-### Other gcc specific attributes.
+### The `.c` to `.exe` Process
+
+### Other gcc specific attributes
+
+## 11. Closing Note:
+
+All of these parts of the C language are useful in their own right. But with each feature you introduce an additional layer of complexity. Sometimes being additive can take away from your code. Ask yourself: "Does this need to be so complex?". If it doesn't need to be abstracted, don't abstract it.
+
+It's up to you to decide when and where all of these C language features will be useful or not. That's what makes good developer, not just knowing the syntax but when to apply and not apply all of these concepts. That isn't something that can be explained in a short paragraph, it is earned with time and experience. So the best thing you can do is go and build something. Which brings me to this section's final assignment.
