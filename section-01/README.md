@@ -613,7 +613,8 @@ Notice that the top of the memory diagram is the bigger number and the number at
 ![]()
 ![]()
 ![]()
-![]()![]()
+![]()
+![]()
 ![]()
 ![]()
 ![]()
@@ -625,7 +626,7 @@ This zoom in focuses on an area of interest:
 
 - Flash memory at `0x0800 0000` is where you upload your application, which the process for that is called `flashing`. Notice that the flash address ends at `0x080F FFFF`, meaning that we have `0x080F FFFF` - `0x0800 0000` = `0x000F FFFF` bits of memory that we can use for flash memory.
 
-  - If you know how to count in base-16 (aka Hex), you know that `0x000F FFFF` is equivalent to `1048576` bits = `131072` bytes (divided by `1024`) = exactly `128` KB.
+  - If you know how to count in base-16 (aka Hex), you know that `0x000F FFFF` is equivalent to `1048576` bits (divided by `8`) = `131072` bytes (divided by `1024`) = exactly `128` KB.
 
 - Anoter region of note in the zoom-in is the RAM, starting at address `0x2000 0000`. This is where dynamic memory is allocated.
 
@@ -653,7 +654,88 @@ _Mini-exercise:_ Swap two integers using pointers
 
 ### `volatile`: why it matters in hardware
 
+The `volatile` keyword tells the compiler that the relevant variable may change without notice to the compiler. This is especially useful when we are performing **direct memory access** (DMA) operations. DMA, without going into too much detail (we will look more into DMA later), is when memory read and write skips CPU control and hardware memory is directly read from or written to.
+
+```C
+#define DMA_BUFFER_SIZE 256
+volatile uint8_t dma_buffer[DMA_BUFFER_SIZE];  // Mark volatile
+
+void dma_init() {
+    // Start DMA transfer (pseudo-code)
+    start_dma_transfer(dma_buffer, DMA_BUFFER_SIZE);
+}
+
+void poll_dma() {
+    while (!dma_transfer_done()) {
+        // Wait
+    }
+
+    // Process DMA buffer (compiler knows it can change!)
+    for (int i = 0; i < DMA_BUFFER_SIZE; ++i) {
+        process_byte(dma_buffer[i]);
+    }
+}
+
+```
+
+DMA is not the only application for the `volatile` keyword! Some memory values might change during multithreading or even multicore operations.
+
+If the `volatile` keyword is not used, the compiler might re-use cached values or values within the hardware registers (which the compiler does automatically via compiler optimizations). Read more on compiler optimizations [here](https://en.wikipedia.org/wiki/Optimizing_compiler).
+
 ### `const`, `static`, and `extern`
+
+The constant modifier does the same thing in C as with other languages (`final` in Java). It tells the compiler that the relevant variable will never change during runtime, and therefore prevents write operations on that variable.
+
+The `static` keyword is a scope modifier. Usually, you will see the static keyword in these places:
+
+- A static variable inside a function keeps its value between invocations.
+
+- A static global variable or function is "seen" only in the file in which it's declared.
+
+The `extern` keyword is used to declare a variable or a function whose definition is present in some other file.
+
+Generally, the variables and functions defined inside a C source files are only used inside that file. But in large projects where code is split across multiple files (or translation unit), users may need the data, or a part of code defined in another translation unit into the current one. This can be done with the help of extern keyword.
+
+Generally (with STM32), you will see a hardware peripheral handler like UART defined like this in `usart.c`.
+
+```C
+#include "usart.h"
+
+UART_HandleTypeDef huart2;
+
+void MX_USART2_UART_Init(void)
+{
+    huart2.Instance = USART2;
+    huart2.Init.BaudRate = 115200;
+    huart2.Init.WordLength = UART_WORDLENGTH_8B;
+    huart2.Init.StopBits = UART_STOPBITS_1;
+    huart2.Init.Parity = UART_PARITY_NONE;
+    huart2.Init.Mode = UART_MODE_TX_RX;
+    huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+
+    if (HAL_UART_Init(&huart2) != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+
+```
+
+Then in `usart.h` you would see it `extern`ed like so:
+
+```C
+#ifndef __USART_H__
+#define __USART_H__
+
+#include "stm32f0xx_hal.h"
+
+extern UART_HandleTypeDef huart2;
+
+void MX_USART2_UART_Init(void);
+
+#endif
+```
 
 ### `__attribute__((weak))` for override-able definitions
 
