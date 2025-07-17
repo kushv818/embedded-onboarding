@@ -60,3 +60,5 @@ You can also see the Windows setup [guide](SETUP.md) I wrote when we migrated fr
 ## References
 
 ## Acknowledgements
+
+#### _Consider giving this repository a ☆ if you found it helpful!_

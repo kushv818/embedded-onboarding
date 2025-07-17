@@ -239,7 +239,7 @@ for (int i = 0; i < 5; i++) {
 }
 ```
 
-As you will come to realize in later sections, `goto` is basically an assembly instruction.
+As you will come to realize in later sections, `goto` is basically an assembly instruction. Usage of `goto` is also discouraged.
 
 ```C
 int x = 1;
@@ -475,7 +475,7 @@ When considering whether to write a separate helper function
 
 ---
 
-## 7. Pointers and Memory //TODO
+## 7. Pointers and Memory
 
 Pointers and memory manipulation are one of the most powerful tools that the C language gives us.
 
@@ -483,11 +483,13 @@ It also happens to be one of the most error prone parts of C development.
 
 Unfortunately, as embedded software developers that constantly interface with hardware, this is not something we can avoid.
 
+Read this before continuing: [How to read the hexadecimal numbering system](https://learn.sparkfun.com/tutorials/hexadecimal/all)
+
 ### Types of memory
 
 C programs typically operate with 4 distinct memory regions.
 
-| Memory Segment  | Purpose                               | Managed By            |
+| Memory Segment  | Serves                                | Managed By            |
 | --------------- | ------------------------------------- | --------------------- |
 | **Stack**       | Local variables, function calls       | Compiler              |
 | **Heap**        | Dynamically allocated memory          | the user via `malloc` |
@@ -495,24 +497,151 @@ C programs typically operate with 4 distinct memory regions.
 | **BSS**         | Global/static uninitialized variables | OS/loader             |
 | **Text (Code)** | Executable instructions               | OS/loader             |
 
+### Memory in software
+
+### Heap memory
+
+### Stack memory
+
+Stack memory is where local variables and functions "live" during runtime. It's commonly depicted as an upside-down [stack](<https://en.wikipedia.org/wiki/Stack_(abstract_data_type)>).
+
+Stack frames are 'frames' or structures of data that get pushed on to the stack. In the case of the call stack, a call stack frame contains local variables and functions related to the function call.
+
+The stack is limited and does not grow in size. If too many stack frames are placed on the call stack and exceeds the address space for the call stack, this is known as stack overflow.
+
+We can manage memory hardware using the C language via the following functions:
+`malloc`, `calloc` and `free`.
+
+### Memory in hardware
+
+On the hardware side, there are two types of memory: **S**tatic RAM and **Dynamic** RAM.
+
+A brief overview on the differences:
+
+#### SRAM
+
+- is bigger (6 transistors),
+- faster
+- and more expensive
+
+#### DRAM
+
+- is smaller (1 capacitor),
+- slower
+- and cheaper
+
+DRAM uses capacitors, which means that it slowly leaks charge over time.
+This means that DRAM cells must be periodically refreshed, which is why it's called dynamic.
+
+We will talk about this more in later sections, but know that SRAM is more suited to cache memory, and DRAM is more suited to main memory.
+
 ### What is a pointer?
 
-A pointer is a variable that holds the memory address of another variable. A pointer may store it's own memory address, but this is kind of useless to do.
+A pointer is a variable that holds the memory address of another variable. A pointer may store it's own memory address, but that's pointless (haha).
 
 ```C
 int num = 10;
 int* ptr = &num;
 ```
 
-In the example above
+In the example above, `num` is just a normal integer variable. `ptr` holds the **address** of the variable `num`. Therefore, if I dereference `ptr` by `*ptr`, it will return `10`.
 
 ### `*`, `&`, pointer arithmetic
 
 ### Arrays vs pointers
 
-### The Linker
+### Allocation
+
+#### `malloc`
+
+`malloc(size_t s)` returns the address of the allocated memory of size `s`.
+
+`malloc`ed memory is unintialized, meaning you cannot reference it until you put something in that memory region.
+
+```C
+int *p1 = malloc(4*sizeof(int));
+```
+
+#### `calloc`
+
+Does the same thing as `malloc` except initializes everything inside the memory block to `0`.
+
+`n` is the number of objects and `type` is the data type.
+
+```C
+int* p1 = calloc(n, sizeof(type));
+```
+
+#### `free`
+
+`free(void* ptr)` deallocates the region of memory that the pointer points to.
+
+The pointer itself still exists, as a "dangling pointer". Its value still points to the same memory address, but that memory address is now no longer allocated.
+
+Ending the object’s lifetime invalidates all pointers to the object ~instantaneously, and therefore any use of a dangling pointer whatsoever. Even `printf("%p")` is undefined behavior.
+
+`free` is not guaranteed. In fact, none of the memory functions are guaranteed -- `malloc` can fail if there is not enough memory in reserve to afford it.
+
+### A memory map
+
+A memory map is helpful in visualizing the different sections of memory and what the sections are dedicated to.
+
+Memory-mapped I/O (MMIO) is when computers use the same address space to host the main memory (heap, stack and BSS from earlier) AND I/O devices.
+
+Disclaimer: this memory map is based off of STM32 MCU documentation, and all MCUs use the following memory map to some degre. This is a general diagram not specific to any line of chipsets manufactured, and applies to most of them. That said, there are always a few minor differences.
+
+Look at the picture below:
+
+![img](../assets/1/mmiolarge.png)
+
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+
+Notice that the top of the memory diagram is the bigger number and the number at the bottom is 0. We call this the high address and the low address, respectively.
+
+![img](../assets/1/mmiozoom.png)
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+
+This zoom in focuses on an area of interest:
+
+- Flash memory at `0x0800 0000` is where you upload your application, which the process for that is called `flashing`. Notice that the flash address ends at `0x080F FFFF`, meaning that we have `0x080F FFFF` - `0x0800 0000` = `0x000F FFFF` bits of memory that we can use for flash memory.
+
+  - If you know how to count in base-16 (aka Hex), you know that `0x000F FFFF` is equivalent to `1048576` bits = `131072` bytes (divided by `1024`) = exactly `128` KB.
+
+- Anoter region of note in the zoom-in is the RAM, starting at address `0x2000 0000`. This is where dynamic memory is allocated.
+
+#### Memory architecture will be discussed in more detail in later sections.
+
+For now, know the different sections of memory and that we can manipulate external using memoery locations via MMIO.
 
 ### Types of memory-based errors
+
+#### Dangling pointer
+
+#### Wild pointer
+
+#### Double free
+
+#### Memory leaks
 
 ### Common mistakes / examples of bad memory management
 
@@ -548,9 +677,56 @@ _Mini-exercise:_ Simulate an LED toggle register
 
 ## 10. Compilers and Build Systems
 
-### The `.c` to `.exe` Process
+### The big idea
 
-### Other gcc specific attributes
+Before your written `.c` file is turned into something that actually runs on the CPU, it must be preprocessed, compiled, the assembled, then linked, then loaded. Only then can it be ran.
+
+#### The preprocessor will:
+
+- remove comments,
+- expand macros
+- expands included files
+
+This is why `#define`s or `#include`s are also called _preprocessor directives_.
+
+The preprocessor outputs a `.i` file.
+
+#### The compiler
+
+From the raw source code created by preprocessing, the compiler will perform
+lexical, semantic and syntax analysis (using an abstract syntax tree) and translate your code into intermediary assembly.
+
+It is responsible for turning your written `.c` file into an `.o` object file.
+
+#### Assembler
+
+The assembler simply translates the assembly into machine code. With the exception of pseudo instructions, each assembly instruction is one-to-one to a direct machine code instruction.
+
+#### Linker
+
+The linker, from the `.s` file, resolves symbols, external functions and addresses to global variables.
+
+A linker or link editor is a computer program that combines intermediate software build files such as object and library files into a single executable file such as a program or library.
+
+A linker is often part of a toolchain that includes a compiler and/or assembler that generates intermediate files that the linker processes. The linker may be integrated with other toolchain tools such that the user does not interact with the linker directly.
+
+(Windows only) If you are familiar with `.dll` files, these are involved with the linker. DLL stands for dynamically linked library, and it means multiple programs can access the same library.
+
+The linker will finally produce a compiled binary, ready for execution.
+
+#### Example
+
+Look at `example.c` in the examples folder. If you run `gcc -E example.c -o example.i`, you will see the raw source code after preprocessing.
+
+After, run `gcc -S example.i -o example.s` to see the assembled code. Take a good look at it, as you will be writing assembly in the following sections.
+
+To see the object file, run `gcc -c example.s -o example.o`. This is the machine code just before linking. It is not ready to run yet.
+
+Finally, to get the final executable, run `gcc example.o -o example`. The output file `example` can now be run by `./example`.
+
+Try it out for yourself! Remove everything but the `example.c` and run `gcc -save-temps example.c -o example` to see all the intermediate steps.
+
+A hexdump is a textual hexadecimal view of the executable. Hexdump in `xxdoutput.txt`. Run `xxd example >> xxdoutput.txt` to see for yourself.
 
 ## 11. Closing Note:
 
