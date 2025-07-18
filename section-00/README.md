@@ -134,9 +134,9 @@ Git ensures that every change is tracked, reversible, and reviewable. With that 
 
 ## Git Utility Files
 
-Git tracks everything by default, but that doesn't mean it should.
+Git tracks everything by default, but sometimes it shouldn't.
 
-Projects often include a file called .gitignore, which tells Git what not to track. This is where you exclude things like:
+Projects often include a file called `.gitignore`, which tells Git what not to track. This is where you exclude things like:
 
 - Build artifacts (`/build/`, `*.o`, `*.elf`)
 
@@ -157,5 +157,11 @@ Other useful Git utility files include:
 - `.gitconfig`: Your personal Git settings file, usually found in your home directory (~/.gitconfig)
 
 ---
+
+## Github Workflow
+
+Generally, most git actions follow this structure within the contributing process:
+
+![img](../assets/0/githubflow.png)
 
 ### Navigate to WORK.md in this folder.

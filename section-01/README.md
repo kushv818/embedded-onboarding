@@ -26,6 +26,44 @@ Once you feel like you have a good grasp on syntax, program structure, and progr
 
 ---
 
+## 0. Binary, bitwise and logic.
+
+Treat this section like it's not ordered. Refer back to it as needed.
+
+| Operator | Name        | Description                       |     |
+| -------- | ----------- | --------------------------------- | --- |
+| `&`      | AND         | Bit set in both                   |     |
+| `\|`     | OR          | Bit set in either                 |
+| `^`      | XOR         | Bit set in one, not both          |     |
+| `~`      | NOT         | Invert all bits                   |     |
+| `<<`     | Left Shift  | Multiply by power of two          |     |
+| `>>`     | Right Shift | Divide by power of two (unsigned) |     |
+
+These are different from `&&`, `||`, and `!` for logical (boolean) expressions (true/false).
+
+### Shifting
+
+```C
+uint8_t x = 0b00000001;
+x = x << 2;
+// x = 0b00000100
+x = x >> 1;
+// x = 0b00000010
+// and so on
+```
+
+### How to use
+
+- Setting a bit: `reg |= (1 << n);`
+
+- Clearing a bit: `reg &= ~(1 << n);`
+
+- Toggling a bit: `reg ^= (1 << n);`
+
+- Checking a bit: `if (reg & (1 << n)) {...}`
+
+Shifting is important because you can succinctly mask at the most significant bit without typing out `0x80000000` everytime. Instead, you would just write `(1 << 31)`.
+
 ## 1. Why C?
 
 ### History & purpose of C
@@ -239,7 +277,7 @@ for (int i = 0; i < 5; i++) {
 }
 ```
 
-As you will come to realize in later sections, `goto` is basically an assembly instruction.
+As you will come to realize in later sections, `goto` is basically an assembly instruction. Usage of `goto` is also discouraged.
 
 ```C
 int x = 1;
@@ -289,7 +327,7 @@ int main(int argc, char** argv);
 But this one has two stars `char**`.
 If `char*` is an array of `char`, it would make sense that `char**` is an array of `char*`.
 
-In other words, the `char**` you see is an array of strings. More on this later.
+In other words, the `char**` you see is an array of strings.
 
 ### Type specifiers: `unsigned`, `long`, `short`
 
@@ -344,11 +382,62 @@ Structs are user defined data types that are groupings of different types under 
 
 Declare a struct like so:
 
+```c
+struct Sensor {
+    int16_t temperature;
+    uint16_t humidity;
+    uint32_t pressure;
+};
+```
+
 ### Nested structs
+
+```c
+struct Coordinates {
+    float latitude;
+    float longitude;
+};
+
+struct GPSData {
+    struct Coordinates position;
+    uint32_t timestamp;
+};
+```
 
 ### `typedef` for clean code
 
+```c
+typedef struct {
+    int16_t x;
+    int16_t y;
+} point_t;
+
+point_t myp = {10,10};
+```
+
 ### When to use `union`
+
+`union` is when multiple struct members share the same memory location. This is useful when you want to interpret the same binary data in different ways.
+
+Read about [IEEE-754 FP Standard](https://en.wikipedia.org/wiki/IEEE_754).
+
+```c
+typedef union {
+    float f; // define a float
+    uint32_t u; // put a 32bit int on top
+} floatp_t;
+
+float flip_sign(float input) {
+    floatp_t fu;
+    fu.f = input;
+
+    fu.u ^= (1U << 31);  // Flip the sign bit (bit 31)
+    return fu.f;
+}
+
+```
+
+You cannot do this with a normal float. This is also not MISRA-C compliant.
 
 _Mini-exercise:_ Define a `struct` for sensor data
 
@@ -455,7 +544,7 @@ then from within `main.c` I can access the variable `NUM_DOG` that was declared 
 
 A couple caveats to the `extern` keyword: if the variable is defined more than one after `extern` is declared, you will get a linker error.
 
-### Helper functions //TODO
+### Helper functions
 
 When writing functions, sometimes it's helpful to write smaller, helper functions that do a specific sub task. This is especially useful when the subtask is repetitive.
 
@@ -471,11 +560,30 @@ void print_sensor_data(temp_sensor_packet_t* s, int celsius) {
 }
 ```
 
-When considering whether to write a separate helper function
+When considering whether to write a separate helper function, ask yourself:
+
+- Does this block of code have a unique purpose?
+
+  - Yes: Make it a function.
+  - No: Keep it inline, or a macro at best.
+
+- Is this reused logic?
+
+  - Yes: Definitely make it a function.
+  - No: Keep it as is.
+
+- Would naming the logic improve understanding?
+
+  - Yes: Make it a function.
+  - No: code should be self-explanatory if answered no.
+
+- Would over abstraction be more harmful than helpful?
+  - Yes: Keep it as is
+  - No: Consider the other questions.
 
 ---
 
-## 7. Pointers and Memory //TODO
+## 7. Pointers and Memory
 
 Pointers and memory manipulation are one of the most powerful tools that the C language gives us.
 
@@ -483,11 +591,13 @@ It also happens to be one of the most error prone parts of C development.
 
 Unfortunately, as embedded software developers that constantly interface with hardware, this is not something we can avoid.
 
+Read this before continuing: [How to read the hexadecimal numbering system](https://learn.sparkfun.com/tutorials/hexadecimal/all)
+
 ### Types of memory
 
 C programs typically operate with 4 distinct memory regions.
 
-| Memory Segment  | Purpose                               | Managed By            |
+| Memory Segment  | Serves                                | Managed By            |
 | --------------- | ------------------------------------- | --------------------- |
 | **Stack**       | Local variables, function calls       | Compiler              |
 | **Heap**        | Dynamically allocated memory          | the user via `malloc` |
@@ -495,26 +605,259 @@ C programs typically operate with 4 distinct memory regions.
 | **BSS**         | Global/static uninitialized variables | OS/loader             |
 | **Text (Code)** | Executable instructions               | OS/loader             |
 
+### Memory in software
+
+### Heap memory
+
+### Stack memory
+
+Stack memory is where local variables and functions "live" during runtime. It's commonly depicted as an upside-down [stack](<https://en.wikipedia.org/wiki/Stack_(abstract_data_type)>).
+
+Stack frames are 'frames' or structures of data that get pushed on to the stack. In the case of the call stack, a call stack frame contains local variables and functions related to the function call.
+
+The stack is limited and does not grow in size. If too many stack frames are placed on the call stack and exceeds the address space for the call stack, this is known as stack overflow.
+
+We can manage memory hardware using the C language via the following functions:
+`malloc`, `calloc` and `free`.
+
+### Memory in hardware
+
+On the hardware side, there are two types of memory: **S**tatic RAM and **Dynamic** RAM.
+
+A brief overview on the differences:
+
+#### SRAM
+
+- is bigger (6 transistors),
+- faster
+- and more expensive
+
+#### DRAM
+
+- is smaller (1 capacitor),
+- slower
+- and cheaper
+
+DRAM uses capacitors, which means that it slowly leaks charge over time.
+This means that DRAM cells must be periodically refreshed, which is why it's called dynamic.
+
+We will talk about this more in later sections, but know that SRAM is more suited to cache memory, and DRAM is more suited to main memory.
+
 ### What is a pointer?
 
-A pointer is a variable that holds the memory address of another variable. A pointer may store it's own memory address, but this is kind of useless to do.
+A pointer is a variable that holds the memory address of another variable. A pointer may store it's own memory address, but that's pointless (haha).
 
 ```C
 int num = 10;
 int* ptr = &num;
 ```
 
-In the example above
+In the example above, `num` is just a normal integer variable. `ptr` holds the **address** of the variable `num`. Therefore, if I dereference `ptr` by `*ptr`, it will return `10`.
 
 ### `*`, `&`, pointer arithmetic
 
 ### Arrays vs pointers
 
-### The Linker
+### Allocation
+
+#### `malloc`
+
+`malloc(size_t s)` returns the address of the allocated memory of size `s`.
+
+`malloc`ed memory is unintialized, meaning you cannot reference it until you put something in that memory region.
+
+```C
+int *p1 = malloc(4*sizeof(int));
+```
+
+#### `calloc`
+
+Does the same thing as `malloc` except initializes everything inside the memory block to `0`.
+
+`n` is the number of objects and `type` is the data type.
+
+```C
+int* p1 = calloc(n, sizeof(type));
+```
+
+#### `free`
+
+`free(void* ptr)` deallocates the region of memory that the pointer points to.
+
+The pointer itself still exists, as a "dangling pointer". Its value still points to the same memory address, but that memory address is now no longer allocated.
+
+Ending the object’s lifetime invalidates all pointers to the object ~instantaneously, and therefore any use of a dangling pointer whatsoever. Even `printf("%p")` is undefined behavior.
+
+`free` is not guaranteed. In fact, none of the memory functions are guaranteed -- `malloc` can fail if there is not enough memory in reserve to afford it.
+
+### A memory map
+
+A memory map is helpful in visualizing the different sections of memory and what the sections are dedicated to.
+
+Memory-mapped I/O (MMIO) is when computers use the same address space to host the main memory (heap, stack and BSS from earlier) AND I/O devices.
+
+Disclaimer: this memory map is based off of STM32 MCU documentation, and all MCUs use the following memory map to some degre. This is a general diagram not specific to any line of chipsets manufactured, and applies to most of them. That said, there are always a few minor differences.
+
+Look at the picture below:
+
+![img](../assets/1/mmiolarge.png)
+
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+
+Notice that the top of the memory diagram is the bigger number and the number at the bottom is 0. We call this the high address and the low address, respectively.
+
+![img](../assets/1/mmiozoom.png)
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+![]()
+
+This zoom in focuses on an area of interest:
+
+- Flash memory at `0x0800 0000` is where you upload your application, which the process for that is called `flashing`. Notice that the flash address ends at `0x080F FFFF`, meaning that we have `0x080F FFFF` - `0x0800 0000` = `0x000F FFFF` bits of memory that we can use for flash memory.
+
+  - If you know how to count in base-16 (aka Hex), you know that `0x000F FFFF` is equivalent to `1048576` bits (divided by `8`) = `131072` bytes (divided by `1024`) = exactly `128` KB.
+
+- Anoter region of note in the zoom-in is the RAM, starting at address `0x2000 0000`. This is where dynamic memory is allocated.
+
+#### Memory architecture will be discussed in more detail in later sections.
+
+For now, know the different sections of memory and that we can manipulate external using memoery locations via MMIO.
 
 ### Types of memory-based errors
 
-### Common mistakes / examples of bad memory management
+#### Dangling pointer
+
+Happens when you try to reference a pointer that has already been freed.
+
+```C
+int* p = malloc(sizeof(int));
+free(p);
+*p = 10;  // <- p is now dangling — using it here is undefined behavior
+```
+
+#### Wild pointer
+
+When you try to reference a pointer that was never initialized to begin with.
+
+```C
+int* p;
+*p = 42;
+```
+
+#### Double free
+
+As the name implies, it's when you try to free the same region of memory more than once. Surprisingly, the compiler does not catch this either.
+
+```C
+int* p;     // uninitialized
+*p = 42;
+```
+
+#### Memory leaks
+
+When you initialize memory, but `null` the pointer so that it is no longer reachable (reference-able).
+
+```c
+int* p = malloc(100);
+// No free(), pointer lost — leak
+p = NULL;
+```
+
+The memory region still exists in RAM, but cannot be accessed at all. Once you `null` p, you cannot call `free()` on it.
+
+So memory leaks are called "leaks" because you are slowly overfilling RAM with memory regions that cannot be accessed, much like water in a bucket that spills over is lost and can't be of use to anyone.
+
+#### Segfaults
+
+Short for segmentation fault, this is when the operating system is notified that some software has attempted to access a restricted area of memory.
+
+Ways this can happen:
+
+- Dereferencing a `NULL` or wild pointer or memory that was freed
+- Array out of bounds with no boundary checking
+- Stack overflow
+- Straight up accessing high address memory like:
+
+```C
+int* sys_mem = (int*)0xFFFFFFFF;
+*sys_mem = 3;  // <- segfault: accessing reserved address space
+```
+
+Memory spaces, especially near the high address, are almost always reserved by either the kernel (OS) or some hardware unit.
+For ARM architectures, which is what STM32 Microcontrollers are based off, high address memory is used by the [System Control Block](https://developer.arm.com/documentation/ddi0403/d/System-Level-Architecture/System-Address-Map/System-Control-Space--SCS-/About-the-System-Control-Block).
+
+### Examples of bad memory management
+
+There are 3 things wrong with the memory management in the snippet below. Can you identify them?
+
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+void bad_memory_example() {
+
+    int* wild_ptr;
+    *wild_ptr = 42;
+
+    int* data = malloc(100);
+    if (!data) return;
+
+    free(data);
+    free(data);
+
+    char* leak = malloc(256);
+    leak = NULL;
+}
+```
+
+### Function pointers
+
+A function pointer is a pointer that holds the address of a function. Yes, functions have addresses, too. We know that data has values and addresses in data memory. Well, functions have definitions and addresses in instruction memory.
+
+It allows for dynamic function calls, which is essential in embedded systems for:
+
+- Callback mechanisms (e.g., HAL drivers)
+
+- Event-driven systems
+
+- Decoupling modules
+
+- Replacing switch statements for certain operations
+
+Syntax Example
+
+```c
+void my_handler(void) {
+    // Do something
+}
+
+void register_callback(void (*cb)(void)) {
+    cb();  // Call the function via the pointer
+}
+
+int main() {
+    register_callback(my_handler);
+}
+```
 
 _Mini-exercise:_ Swap two integers using pointers
 
@@ -524,9 +867,154 @@ _Mini-exercise:_ Swap two integers using pointers
 
 ### `volatile`: why it matters in hardware
 
+The `volatile` keyword tells the compiler that the relevant variable may change without notice to the compiler. This is especially useful when we are performing **direct memory access** (DMA) operations. DMA, without going into too much detail (we will look more into DMA later), is when memory read and write skips CPU control and hardware memory is directly read from or written to.
+
+```C
+#define DMA_BUFFER_SIZE 256
+volatile uint8_t dma_buffer[DMA_BUFFER_SIZE];  // Mark volatile
+
+void dma_init() {
+    // Start DMA transfer (pseudo-code)
+    start_dma_transfer(dma_buffer, DMA_BUFFER_SIZE);
+}
+
+void poll_dma() {
+    while (!dma_transfer_done()) {
+        // Wait
+    }
+
+    // Process DMA buffer (compiler knows it can change!)
+    for (int i = 0; i < DMA_BUFFER_SIZE; ++i) {
+        process_byte(dma_buffer[i]);
+    }
+}
+
+```
+
+DMA is not the only application for the `volatile` keyword! Some memory values might change during multithreading or even multicore operations.
+
+If the `volatile` keyword is not used, the compiler might re-use cached values or values within the hardware registers (which the compiler does automatically via compiler optimizations). Read more on compiler optimizations [here](https://en.wikipedia.org/wiki/Optimizing_compiler).
+
 ### `const`, `static`, and `extern`
 
+The constant modifier does the same thing in C as with other languages (`final` in Java). It tells the compiler that the relevant variable will never change during runtime, and therefore prevents write operations on that variable.
+
+The `static` keyword is a scope modifier. Usually, you will see the static keyword in these places:
+
+- A static variable inside a function keeps its value between invocations.
+
+- A static global variable or function is "seen" only in the file in which it's declared.
+
+The `extern` keyword is used to declare a variable or a function whose definition is present in some other file.
+
+Generally, the variables and functions defined inside a C source files are only used inside that file. But in large projects where code is split across multiple files (or translation unit), users may need the data, or a part of code defined in another translation unit into the current one. This can be done with the help of extern keyword.
+
+Generally (with STM32), you will see a hardware peripheral handler like UART defined like this in `usart.c`.
+
+```C
+#include "usart.h"
+
+UART_HandleTypeDef huart2;
+
+void MX_USART2_UART_Init(void)
+{
+    huart2.Instance = USART2;
+    huart2.Init.BaudRate = 115200;
+    huart2.Init.WordLength = UART_WORDLENGTH_8B;
+    huart2.Init.StopBits = UART_STOPBITS_1;
+    huart2.Init.Parity = UART_PARITY_NONE;
+    huart2.Init.Mode = UART_MODE_TX_RX;
+    huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+
+    if (HAL_UART_Init(&huart2) != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+
+```
+
+Then in `usart.h` you would see it `extern`ed like so:
+
+```C
+#ifndef __USART_H__
+#define __USART_H__
+
+#include "stm32f0xx_hal.h"
+
+extern UART_HandleTypeDef huart2;
+
+void MX_USART2_UART_Init(void);
+
+#endif
+```
+
+### Example:
+
+```C
+volatile const uint32_t* reg = (uint32_t*)0x40021000;
+```
+
+Consider the following code snippet. We declare a pointer to a region in memory that should ONLY be changed via hardware and never changed via software.
+
 ### `__attribute__((weak))` for override-able definitions
+
+This is a compiler attributed only supported on GCC and CLANG (these are two very popular C compilers). Meaning that if you compile with MSVC, you will get a syntax error.
+
+Compiler attributes are small annotations used to define compiler behavior around certain parts of the code. There are many more other than `weak` but we will focus on this in particular because it's very prevalent in vendor-provided Hardware Abstraction Layers (HAL).
+
+The weak attribute allows for multiple definitions of functions (which without `weak` is a syntax error due to symbol conflicts). Of the two different definitions for the same function, one will be the `weak` definition, and the other one is the `strong` definition. Only one `strong` definition is allowed.
+
+At link time, if both a weak and strong definition of a symbol exist, the strong one takes precedence. This mechanism is heavily used in vendor-supplied HALs to provide default implementations of callback functions or interrupt handlers that the user can optionally override without modifying the original library code.
+
+```C
+__attribute__((weak)) int _read(int file, char *ptr, int len)
+{
+  (void)file;
+  int DataIdx;
+
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+  {
+    *ptr++ = __io_getchar();
+  }
+
+  return len;
+}
+```
+
+This is a weak definition of a low-level system call used by the standard C library (libc) for input operations—typically part of retargeting the printf() family on embedded systems without a traditional OS or file system.
+
+If no `_read()` is defined anywhere in the build, including as a weak default, the linker will fail with an error like:
+
+```
+undefined reference to _read
+```
+
+This is because standard I/O functions like `scanf()`, `getchar()`, or even `fgets()` internally rely on `_read()`.
+
+The weak attribute prevents this by providing a fallback, so the build succeeds even if the user doesn’t define `_read()` explicitly.
+
+To continue this example, if the user wanted to define read so they can use `printf` over UART (great for print debugging on embedded systems), they can redirect the i/o stream through UART like such:
+
+```C
+#include "stm32f4xx_hal.h"
+extern UART_HandleTypeDef huart2;
+
+int _read(int file, char *ptr, int len)
+{
+    HAL_StatusTypeDef status;
+
+    status = HAL_UART_Receive(&huart2, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+    if (status == HAL_OK) {
+        return len;
+    } else {
+        return -1; // Signal error to libc
+    }
+}
+```
+
+And so this definition of `_read()` will override the weakly defined one above.
 
 ### Memory-mapped I/O example
 
@@ -536,21 +1024,121 @@ _Mini-exercise:_ Simulate an LED toggle register
 
 ## 9. Style and Best Practices
 
+As embedded software/ firmware developers, we have to adhere to more standards and guidelines than our colleagues who develop at the application layer.
+
+MISRA C is a set of software development guidelines for the C programming language developed by The MISRA Consortium. Its aims are to facilitate code safety, security, portability and reliability in the context of embedded systems, specifically those systems programmed in ISO C / C90 / C99.
+
+We will always try to adhere to MISRA-C guidelines.
+
 ### Naming conventions
+
+Use consistent, descriptive names: led_state, motor_speed_rpm, ADC_Config.
+
+For global variables, consider a prefix (g*, app*, or subsystem name) to indicate scope.
+
+Follow lower_snake_case for variables and functions; use UPPER_SNAKE_CASE for macros and constants.
+
+### Memory
+
+Avoid dynamic memory allocation (malloc, free) unless absolutely necessary—especially in real-time or safety-critical code.
+
+Use static or stack allocation where possible to improve predictability and avoid fragmentation.
+
+Zero-initialize buffers to avoid undefined behavior.
+
+> MISRA-C explicitly warns against dynamic memory usage.
 
 ### Header files and code organization
 
+Keep header files free of definitions—only put declarations, macros, and typedefs.
+
+Use include guards or #pragma once to prevent multiple inclusion.
+
+Match .c and .h files one-to-one for maintainability.
+
+Group related functionality in subsystems: uart.c/h, motor.c/h, adc.c/h, etc.
+
 ### Commenting and documentation style
 
+Use block comments (/_ ... _/) for APIs and module-level descriptions.
+
+Keep comments relevant to the why, not the what (which the code already shows).
+
+For drivers or platform code, include usage notes and assumptions (e.g., “Assumes peripheral clock is already enabled”).
+
 ### `#define` vs `const`
+
+Use `const` for typed, scoped constants:
+
+```C
+const uint8_t MAX_RETRIES = 5;
+```
+
+Use #define only for compile-time constants, preprocessor flags, or conditional logic:
+
+```C
+#define TIMEOUT_MS 100
+#define DEBUG
+#define BITMASK16(pos) (1U << (pos))
+
+```
 
 ---
 
 ## 10. Compilers and Build Systems
 
-### The `.c` to `.exe` Process
+### The big idea
 
-### Other gcc specific attributes
+Before your written `.c` file is turned into something that actually runs on the CPU, it must be preprocessed, compiled, the assembled, then linked, then loaded. Only then can it be ran.
+
+#### The preprocessor will:
+
+- remove comments,
+- expand macros
+- expands included files
+
+This is why `#define`s or `#include`s are also called _preprocessor directives_.
+
+The preprocessor outputs a `.i` file.
+
+#### The compiler
+
+From the raw source code created by preprocessing, the compiler will perform
+lexical, semantic and syntax analysis (using an abstract syntax tree) and translate your code into intermediary assembly.
+
+It is responsible for turning your written `.c` file into an `.o` object file.
+
+#### Assembler
+
+The assembler simply translates the assembly into machine code. With the exception of pseudo instructions, each assembly instruction is one-to-one to a direct machine code instruction.
+
+#### Linker
+
+The linker, from the `.s` file, resolves symbols, external functions and addresses to global variables.
+
+A linker or link editor is a computer program that combines intermediate software build files such as object and library files into a single executable file such as a program or library.
+
+A linker is often part of a toolchain that includes a compiler and/or assembler that generates intermediate files that the linker processes. The linker may be integrated with other toolchain tools such that the user does not interact with the linker directly.
+
+(Windows only) If you are familiar with `.dll` files, these are involved with the linker. DLL stands for dynamically linked library, and it means multiple programs can access the same library.
+
+The linker will finally produce a compiled binary, ready for execution.
+
+#### Example
+
+Look at `example.c` in the examples [goto\*](examples/example.c) folder. If you run `gcc -E example.c -o example.i`, you will see the raw source code after preprocessing. [goto\*](examples/example.i).
+
+After, run `gcc -S example.i -o example.s` to see the assembled code. [goto\*](examples/example.s). Take a good look at it, as you will be writing assembly in the following sections.
+
+To see the object file, run `gcc -c example.s -o example.o`. This is the machine code just before linking. It is not ready to run yet.
+
+Finally, to get the final executable, run `gcc example.o -o example`. The output file `example` can now be run by `./example`.
+
+Try it out for yourself! Remove everything but the `example.c` and run `gcc -save-temps example.c -o example` to see all the intermediate steps.
+
+A hexdump is a textual hexadecimal view of the executable. Hexdump in `xxdoutput.txt`. Run `xxd example >> xxdoutput.txt` to see for yourself.
+
+![W](../assets/1/Compilation-Process-in-C.png)
 
 ## 11. Closing Note:
 

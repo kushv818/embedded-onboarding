@@ -7,6 +7,9 @@
 *.obj
 *.elf
 
+# Do not ignore example.o, as it is used in the examples.
+!section-01/examples/example.o
+
 # Linker output
 *.ilk
 *.map
@@ -51,3 +54,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+.vscode/
