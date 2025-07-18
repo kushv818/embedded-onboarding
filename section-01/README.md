@@ -1138,7 +1138,9 @@ Try it out for yourself! Remove everything but the `example.c` and run `gcc -sav
 
 A hexdump is a textual hexadecimal view of the executable. Hexdump in `xxdoutput.txt`. Run `xxd example >> xxdoutput.txt` to see for yourself.
 
-![W](../assets/1/Compilation-Process-in-C.png)
+![pic](../assets/1/Compilation-Process-in-C.png)
+
+### Build systems
 
 ## 11. Closing Note:
 

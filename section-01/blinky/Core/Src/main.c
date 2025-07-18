@@ -98,6 +98,18 @@ int main(void) {
   while (1) {
     /* USER CODE END WHILE */
 
+    /**
+
+    Blinky exercise: 
+
+
+    Don't write code outside the while loop.
+
+    
+    Delete this comment and write your code here.
+    
+    */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
