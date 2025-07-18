@@ -554,6 +554,6 @@ _Mini-exercise:_ Simulate an LED toggle register
 
 ## 11. Closing Note:
 
-All of these parts of the C language are useful in their own right. But with each feature you introduce an additional layer of complexity. Sometimes being additive can take away from your code. Ask yourself: "Does this need to be so complex?". If it doesn't need to be abstracted, don't abstract it.
+All of these parts of the C language are useful in their own right. But with each feature you introduce an additional layer of complexity. Sometimes being extra can take away from your code. Ask yourself: "Does this need to be so complex?". If it doesn't need to be abstracted, don't abstract it.
 
 It's up to you to decide when and where all of these C language features will be useful or not. That's what makes good developer, not just knowing the syntax but when to apply and not apply all of these concepts. That isn't something that can be explained in a short paragraph, it is earned with time and experience. So the best thing you can do is go and build something. Which brings me to this section's final assignment.
