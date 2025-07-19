@@ -1,7 +1,5 @@
 _Author: WK_
 
-> For the purpose of this onboarding tutorial, priortize the correctness of the instructions in the sections.
-
 ## **1. Download Tools:**
 
 ### **VSCode:** All operating systems installations can be found [here](https://code.visualstudio.com/download).

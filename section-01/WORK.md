@@ -8,6 +8,8 @@ You should constantly be referring back to the reading or other external sources
 
 This section is probably the longest section as it covers the fundamentals.
 
+Before you start, set up your environment if you haven't done so already. Go to `SETUP.md` at the root of the repo.
+
 > This tutorial assumes you are at least familiar with general programming concepts and syntax.
 
 ## Exercise 1: Hello World and compiling with `gcc`
@@ -16,6 +18,7 @@ This section is probably the longest section as it covers the fundamentals.
 2. Inside your main function, write a function that prints `Hello, World!` to `stdout`.
 3. Compile and run.
 4. Take this easy exercise as an opprtunity to fix your toolchain, compiler settings, IDE settings and more.
+5. Bonus: Swap to integers using pointers.
 
 ## Exercise 2: FizzBuzz
 
@@ -94,21 +97,46 @@ __weak void HAL_Delay(uint32_t Delay)
 
 11. The NUCLEO-F030R8 is the hardware that this exercise targets. DFR has 3 in the shop; come see/talk to me to borrow it. You may also buy your own from this [DIGIKEY link](https://www.digikey.com/en/products/detail/stmicroelectronics/NUCLEO-F030R8/4695526?gad_campaignid=20243136172). They are about $12.
 
+12. How to flash:
+
+- When you build the blinky project via `make`, it will output an `.elf` file. This is an "**E**xecutable and **L**inkable **F**ormat".
+- Connect your board via USB. Run `st-info --probe` to verify the connection.
+- Run the following: `st-flash write build/blinky.elf 0x80000000`
+- Run `st-flash reset` if it doesn't work.
+
+Remember to install the `stlink-tools` via:
+
+```sh
+sudo apt install stlink-tools   # Linux
+brew install stlink             # macOS
+```
+
+---
+
 > Footnote: You are encouraged to seek out more C programming tutorials before you move on to the final project.
 
 ## Final project for this section
 
 ### Choose a project idea from any of the following:
 
-1.
-2.
-3.
+1. Circular Buffer Library
+2. Memory Tracker
+3. Mini Shell
 
-### Instructions that apply to all projects:
+Implementation, design, and details are all up to you. Get creative!
+
+#### Look at `projects` folder for more info on each idea.
+
+### Instructions and requirements that apply to all projects:
 
 - You must link your project as a submodule within your forked copy of the repository
 
 - Your code must be modular. You must write header files for each source file you write. You must also keep source files in a subdirectory called `src` and header files in a subdirectory called `inc`.
+
+- This goes without saying, but you may only use the C language.
+
+  - If you so choose, you may use inline assembly. This is optional.
+  - You must have comments. Minimum 1 multi-line comment per function.
 
 - You must use the _Make_ build system and you must write your own `makefile`. Requirements for build system:
 
@@ -116,5 +144,32 @@ __weak void HAL_Delay(uint32_t Delay)
   - It should support `make clean`, which cleans the `build` folder.
   - It should support `make run`, which runs the built executable.
 
-- You must write your own GitHub workflows config file. At minimum, it should:
-  - Support
+- Create a GitHub Actions workflow in `.github/workflows/build.yml`. Your workflow must:
+
+  - Run on `ubuntu-latest`
+
+  - Perform the following:
+
+  - Checkout the repository
+
+  - Initialize and update submodules
+
+  - Run make and confirm a clean build
+
+  - (Optional bonus) Run make run and check for expected output
+
+- You must have a minimum of 7 **well-named, significant** commits. If you think your project can be finished under 7 commits, it is not hard enough.
+
+  - Pull requests for merging features on branches is not required.
+
+- Create a `README.md` that aptly describes what your project does. Your `README.md` must also contain **all** of the following:
+
+  - A directory tree: use the `tree` command line tool
+  - A short explanation of each module
+
+- If you need help, I have created an example project that satisfies all of the conditions (except module explanations and comments). View it [here](https://github.com/wxkim/julia).
+
+  - Note: Your project should be significantly **less** complex than the example.
+
+- Finally, your project must work. It should build, and functionality error should be minimal, if not zero.
+  - You do not have to make this project cross-platform.

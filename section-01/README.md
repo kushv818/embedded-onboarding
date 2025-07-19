@@ -173,8 +173,6 @@ void cat_meow() {
 }                           // thats it
 ```
 
-_Mini-exercise:_ Hello World and compiling with `gcc`. Navigate to the Work.MD file and locate the appropriate tutorial.
-
 ---
 
 ## 3. Control Structures
@@ -438,8 +436,6 @@ float flip_sign(float input) {
 ```
 
 You cannot do this with a normal float. This is also not MISRA-C compliant.
-
-_Mini-exercise:_ Define a `struct` for sensor data
 
 ---
 
@@ -859,8 +855,6 @@ int main() {
 }
 ```
 
-_Mini-exercise:_ Swap two integers using pointers
-
 ---
 
 ## 8. Important Keywords
@@ -1018,8 +1012,6 @@ And so this definition of `_read()` will override the weakly defined one above.
 
 ### Memory-mapped I/O example
 
-_Mini-exercise:_ Simulate an LED toggle register
-
 ---
 
 ## 9. Style and Best Practices
@@ -1142,8 +1134,105 @@ A hexdump is a textual hexadecimal view of the executable. Hexdump in `xxdoutput
 
 ### Build systems
 
+When writing C programs, especially larger or embedded ones, build systems are essential. They automate compiling, linking, and generating binaries from your source code. Instead of manually running `gcc` for every `.c` file, you define build instructions once and let the system handle it.
+
+#### `make`
+
+- Runs based on a file called Makefile
+
+- You define what files to compile and how
+
+- Great for small-to-medium projects
+
+- You'll write one in your final project
+
+#### `cmake`
+
+- A tool that generates Makefiles or Ninja files
+
+- Better for larger or cross-platform projects
+
+- Often used with STM32Cube exports or CLion/VSCode
+
+- You write a `CMakeLists.txt`, and CMake does the rest
+
+#### `ninja`
+
+Ultra-fast builder used with CMake:
+`cmake -G Ninja . && ninja`
+
+Used for speed, not writing by hand
+
+### Example
+
+Let's say your project structure looks like this:
+
+```txt
+project-root/
+├── src/
+│   └── main.c
+├── inc/
+│   └── main.h
+├── build/
+├── Makefile
+```
+
+Here's what the `Makefile` would look like:
+
+#### First section:
+
+```Make
+CC = gcc
+CFLAGS = -Wall -Iinc
+SRC = $(wildcard src/*.c)
+OBJ = $(SRC:src/%.c=build/%.o)
+TARGET = build/main
+```
+
+This section defines all my constants. CC is C compiler. The compiler is often run with accompanying flags. The target is my output, so `build/main` means that my output will be a `main` executable inside the `build` folder.
+
+However, that's not it. We now have to define the compiling scripts:
+
+```Make
+.PHONY: all clean run
+
+all: $(TARGET)
+
+# Link object files into final executable
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $@
+
+# Compile each .c file into build/
+build/%.o: src/%.c | build
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Make sure build directory exists
+build:
+	mkdir -p build
+
+# Clean build artifacts
+clean:
+	rm -rf build
+
+# Run the program
+run: $(TARGET)
+	./$(TARGET)
+```
+
+`.PHONY` makes sure commands like make clean work no matter what’s in your directory.
+
+You might be wondering what `$<` or `$@` is, since it isn't defined earlier with `CC` or `OBJ` or `CFLAGS`. These are called **automatic variables**:
+
+- `$<` is the automatic variable whose value is the name of the first prerequisite. So, in this case, it is equal to `src/main.c`
+
+- `$@` is the automatic variable whose value is the name of the target. In this case, it's `build/main`
+
+- `%` is a wildcard for matching patterns. So `build/%.o: src/%.c` is saying "take an `.c` file in `src/` and compile it into a `.o` file in `build/`, keeping the same filename base".
+
 ## 11. Closing Note:
 
 All of these parts of the C language are useful in their own right. But with each feature you introduce an additional layer of complexity. Sometimes being extra can take away from your code. Ask yourself: "Does this need to be so complex?". If it doesn't need to be abstracted, don't abstract it.
 
-It's up to you to decide when and where all of these C language features will be useful or not. That's what makes good developer, not just knowing the syntax but when to apply and not apply all of these concepts. That isn't something that can be explained in a short paragraph, it is earned with time and experience. So the best thing you can do is go and build something. Which brings me to this section's final assignment.
+It's up to you to decide when and where all of these C language features will be useful or not. That's what makes good developer, not just knowing the syntax but when to apply and not apply all of these concepts. That isn't something that can be explained in a short paragraph, it is earned with time and experience. So the best thing you can do is go and build something. Which brings me to this section's work.
+
+### Navigate to the WORK.md file for this section.
