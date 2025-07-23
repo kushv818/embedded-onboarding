@@ -23,17 +23,17 @@ GPIOs can be programmed for various tasks. You can configure a GPIO to be either
 - **Output**
     - Sending digital signals out such as turning and LED on, or PWM signals
 
->You can also use GPIO inputs and outputs to emulate digital communication protocols that otherwise would not have been supported by the microcontroller using a technique known as [bit-banging](<https://en.wikipedia.org/wiki/Bit_banging>).
+>You can also use GPIO inputs and outputs to emulate digital communication protocols which we will touch on later that otherwise would not have been supported by the microcontroller using a technique known as [bit-banging](<https://en.wikipedia.org/wiki/Bit_banging>).
 
 ### Using GPIO with Analog Signals
 --- 
 
-Although GPIOs are fundamentally digital pins, they can also be used as analog inputs/outputs, being able to read or output voltages between LOW (0V) and HIGH (+3.3V). Microcontrollers use a technique known as **PWM**, or **Pulse-Width Modulation** in order to simulate an analog output.
+Although GPIOs are fundamentally digital pins, they can also be used to simulate analog inputs/outputs, being able to read or output voltages between LOW (0V) and HIGH (+3.3V). Microcontrollers use a technique known as **PWM**, or **Pulse-Width Modulation** in order to simulate an analog output.
 
 PWM works by rapidly switching a GPIO pin HIGH and LOW at an extremely high frequency, creating a signal what looks like a square wave. By varying the **Duty Cycle**, or the percentage of the time the square wave is HIGH compared to when it is LOW, you can control the level of voltage.
 
 #### How to use PWM
-![alt text](image.png)
+![alt text](..\assets\3\PWMExample.png)
 
 For example, if you wanted to output a GPIO pin at 1.65V, you would need a duty cycle of 50%. If you wanted an output of 0.825V, you would need a duty cycle of 25%.
 
