@@ -43,7 +43,7 @@ Below are a couple of formulas you can use to calculate your desired voltage usi
 **Total Period (s)**
 
 $$
-{\text{Total Period}} = \text{T}_\text{HIGH} + \text{T}_\text{LOW}
+\text{Total Period} = T_{\text{HIGH}} + T_{\text{LOW}}
 $$
 
 - $\text{Total Period}$ is the sum of how long the output is HIGH and how long it is LOW for one iteration
@@ -53,7 +53,7 @@ $$
 **<br>Duty Cycle (%):**
 
 $$
-\text{Duty Cycle} (\%) = \frac{\text{T}_\text{HIGH}}{\text{Total Period}} \times 100
+\text{Duty Cycle} = \frac{T_{\text{HIGH}}}{\text{Total Period}} \times 100
 $$
 
 Where:
