@@ -8,7 +8,7 @@ In section 01, you were able to write firmware for an STM32 microcontroller to b
 
 ---
 
-## 0. GPIO
+## 1. GPIO
 
 **GPIO** stands for **General-Purpose Input/Output**. It is a digital pin on a microcontroller that you can control through firmware programming. GPIOs are important because they allow your microcontroller to interact with the physical world. With GPIO pins, you can do plenty of things such as reading sensors, communicating with other devices, and controlling LEDs, motors, and other high voltage devices.
 
@@ -23,26 +23,53 @@ GPIOs can be programmed for various tasks. You can configure a GPIO to be either
 - **Output**
     - Sending digital signals out such as turning and LED on, or PWM signals
 
->You can also use GPIO inputs and outputs to emulate digital communication protocols which we will touch on later that otherwise would not have been supported by the microcontroller using a technique known as [bit-banging](<https://en.wikipedia.org/wiki/Bit_banging>).
+>You can also use GPIO inputs and outputs to emulate digital communication protocols using a technique known as [bit-banging](<https://en.wikipedia.org/wiki/Bit_banging>).
 
 ### Using GPIO with Analog Signals
---- 
 
 Although GPIOs are fundamentally digital pins, they can also be used to simulate analog inputs/outputs, being able to read or output voltages between LOW (0V) and HIGH (+3.3V). Microcontrollers use a technique known as **PWM**, or **Pulse-Width Modulation** in order to simulate an analog output.
 
-PWM works by rapidly switching a GPIO pin HIGH and LOW at an extremely high frequency, creating a signal what looks like a square wave. By varying the **Duty Cycle**, or the percentage of the time the square wave is HIGH compared to when it is LOW, you can control the level of voltage.
-
-### How to use PWM
----
+PWM works by rapidly switching a GPIO pin HIGH and LOW at an extremely high frequency, creating a signal what looks like a square wave. By varying the **Duty Cycle**, or the percentage of the time the square wave is HIGH compared to when it is LOW, you can control the level of voltage as seen in the image below.
 
 ![alt text](../assets/3/PWMExample.png)
 
-For example, if you wanted to output a GPIO pin at 1.65V, you would need a duty cycle of 50%. If you wanted an output of 0.825V, you would need a duty cycle of 25%. You can control these duty cycles using hardware timers, which we will demonstrate later in this section.
+For example, if you wanted to output a GPIO pin at 1.65V, you would need a duty cycle of 50%. If you wanted an output of 0.825V, you would need a duty cycle of 25%. You can control these duty cycles using hardware timers, which we will demonstrate later in section 03.
 
-PWM is especially important for LED dimming, as LEDs require a minimum voltage applied to turn on. With PWM, you are able to keep the LED at that voltage level without having it turn off. The LED dims because it turns on and off at a fast rate that your eyes cannot percieve, creating the illusion of dimming. You can also use PWM in the same context for controlling motor speeds.  
+A real world example of using PWM is for LED dimming, as LEDs require a minimum voltage applied to turn on. With PWM, you are able to keep the LED at that voltage level without having it turn off. The LED dims because it turns on and off at a fast rate that your eyes cannot percieve, creating the illusion of dimming. You can also use PWM in the same context for controlling motor speeds. 
 
+### How to use PWM
+Below are a couple of formulas you can use to calculate your desired voltage using PWM.
 
-### GPIO STM32 Example
----
+**Total Period (s)**
 
-TODO: Write tutorial on how to blink and dim the LED and how to poll button inputs Antony GOAT
+$$
+{\text{Total Period}} = \text{T}_\text{HIGH} + \text{T}_\text{LOW}
+$$
+
+- $\text{Total Period}$ is the sum of how long the output is HIGH and how long it is LOW for one iteration
+- $\text{T}_\text{HIGH}$ is the amount of time in seconds during the period when the output is HIGH
+- $\text{T}_\text{LOW}$ is the amount of time in seconds during the period when the output is LOW
+
+**<br>Duty Cycle (%):**
+
+$$
+\text{Duty Cycle} (\%) = \frac{\text{T}_\text{HIGH}}{\text{Total Period}} \times 100
+$$
+
+Where:
+- $\text{Duty Cycle}$ is the percentage of time the signal is HIGH
+- $\text{T}_\text{HIGH}$ is the amount of time in seconds during the period when the output is HIGH
+- $\text{Total Period}$ is the sum of how long the output is HIGH and how long it is LOW for one iteration
+
+**<br>Average Output Voltage:**
+
+$$
+V_{\text{out}} = V_{\text{HIGH}} \times \frac{\text{Duty Cycle}}{100}
+$$
+
+Where:
+- $V_{\text{out}}$ is the average voltage output
+- $V_{\text{HIGH}}$ is the logic HIGH voltage (3.3V)
+- Duty Cycle is the percentage of time the signal is HIGH
+
+## 2. Interrupts
