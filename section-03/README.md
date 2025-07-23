@@ -41,7 +41,8 @@ For example, if you wanted to output a GPIO pin at 1.65V, you would need a duty 
 
 PWM is especially important for LED dimming, as LEDs require a minimum voltage applied to turn on. With PWM, you are able to keep the LED at that voltage level without having it turn off. The LED dims because it turns on and off at a fast rate that your eyes cannot percieve, creating the illusion of dimming. You can also use PWM in the same context for controlling motor speeds.  
 
----
 
 ### GPIO STM32 Example
+---
+
 TODO: Write tutorial on how to blink and dim the LED and how to poll button inputs Antony GOAT
