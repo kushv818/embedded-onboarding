@@ -25,16 +25,21 @@ GPIOs can be programmed for various tasks. You can configure a GPIO to be either
 
 >You can also use GPIO inputs and outputs to emulate digital communication protocols that otherwise would not have been supported by the microcontroller using a technique known as [bit-banging](<https://en.wikipedia.org/wiki/Bit_banging>).
 
+### Using GPIO with Analog Signals
+--- 
+
 Although GPIOs are fundamentally digital pins, they can also be used as analog inputs/outputs, being able to read or output voltages between LOW (0V) and HIGH (+3.3V). Microcontrollers use a technique known as **PWM**, or **Pulse-Width Modulation** in order to simulate an analog output.
 
 PWM works by rapidly switching a GPIO pin HIGH and LOW at an extremely high frequency, creating a signal what looks like a square wave. By varying the **Duty Cycle**, or the percentage of the time the square wave is HIGH compared to when it is LOW, you can control the level of voltage.
 
+#### How to use PWM
 ![alt text](image.png)
 
 For example, if you wanted to output a GPIO pin at 1.65V, you would need a duty cycle of 50%. If you wanted an output of 0.825V, you would need a duty cycle of 25%.
 
 PWM is especially important for LED dimming, as LEDs require a minimum voltage applied to turn on. With PWM, you are able to keep the LED at that voltage level without having it turn off. The LED dims because it turns on and off at a fast rate that your eyes cannot percieve, creating the illusion of dimming. You can also use PWM in the same context for controlling motor speeds.  
 
-### GPIO STM32 Example
-TODO: Write tutorial on how to blink and dim the LED and how to poll button inputs
+---
 
+### GPIO STM32 Example
+TODO: Write tutorial on how to blink and dim the LED and how to poll button inputs Antony GOAT
