@@ -8,7 +8,7 @@ In section 01, you were able to write firmware for an STM32 microcontroller to b
 
 ---
 
-## 1. GPIO
+## 1. General-Purpose Input/Output (GPIO)
 
 **GPIO** stands for **General-Purpose Input/Output**. It is a digital pin on a microcontroller that you can control through firmware programming. GPIOs are important because they allow your microcontroller to interact with the physical world. With GPIO pins, you can do plenty of things such as reading sensors, communicating with other devices, and controlling LEDs, motors, and other high voltage devices.
 
@@ -24,6 +24,26 @@ GPIOs can be programmed for various tasks. You can configure a GPIO to be either
     - Sending digital signals out such as turning and LED on, or PWM signals
 
 >You can also use GPIO inputs and outputs to emulate digital communication protocols using a technique known as [bit-banging](<https://en.wikipedia.org/wiki/Bit_banging>).
+
+### STM32 Example: Using a Button to Turn On an LED
+
+Below is an example on how to read a input from a button and output to a LED using GPIO pins in your main loop. If you have an STM32, you can try this out but you would need to first change the pin assignments to your respective GPIO pins in your .ioc file using STM32CubeMX.
+
+```C
+// Assume: Button on GPIOA Pin 0, LED on GPIOC Pin 13
+
+while (1)
+{
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) // Button pressed
+    {
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET); // Turn on LED
+    }
+    else
+    {
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET); // Turn off LED
+    }
+}
+```
 
 ### Using GPIO with Analog Signals
 
@@ -73,3 +93,61 @@ Where:
 - Duty Cycle is the percentage of time the signal is HIGH
 
 ## 2. Interrupts
+
+An **Interrupt** is a signal that pauses the code that is currently running in order to execute another piece of code before resuming its previous task. Interrupts are extremely important in embedded systems as they offer an immediate response to time-critical events such as button presses, sensor and communication data, or indications of data buffers being full. 
+
+### Types of Interrupts
+
+There are two types of interrupts we will be looking at:
+- **External**
+- **Internal**
+
+**External** interrupts are triggered by hardware outside of the microcontroller such as buttons, sensors, keyboards, or mice.
+
+**Internal** interrupts are triggered by events inside of the microcontroller through peripherals such as timers, ADC completion, data buffers being full, or software events such as system calls. 
+
+### How do Interrupts Work?
+
+While the main program is running, an **IRQ** or **Interrupt Request** signal will be sent either internally or externally to alert the CPU. The processor will then pause the main program and save its current state before **handling** the interrupt by jumping to and executing an **ISR** or **Interrupt Service Routine**, which is a function designed to run upon an IRQ. After the ISR has completed, the program will resume the main program from its previous saved state.
+
+### Polling Vs Interrupts
+
+In [1. GPIO](#1-gpio) you were able to learn about how GPIOs can read digital signals from external peripherals such as buttons. Using this knowledge, if you wanted to read the input of a button to turn on an LED by constantly checking the state of the button in the main loop in a method known as **Polling**.
+
+Polling can be very easy to implement and is easily understandable and able to be debugged, but it consumes CPU usage and power because it would constantly run in the background. Another disadvantage to polling is that it cannot handle time-critical tasks, and it may miss events if it is polling too slowly. 
+
+>Another example: If you had an accelerometer sensor that outputs at a certain rate and you wanted to implement a [Kalman Filter](https://en.wikipedia.org/wiki/Kalman_filter), which requires the state of the system to be updated at a certain time rate, polling may update it too fast which could also it mess up. 
+
+Interrupts can solve a lot of the issues mentioned above, but the disadvantages to using interrupts are that it can be harder to understand and debug, and introduce bugs if the ISR is written improperly. Using too many interrupts in a program can lead to even less efficiency because it can overwhelm the CPU, as it requires a lot of overhead to pause the main program, save its state and execute the ISR.
+
+>You may have experienced your computer slowing down and opened up the Task Manager. You may have also come across a high usage of system interrupts leading to high CPU usage. This is an example of what can go wrong with interrupts.
+
+This section went over a basic introduction to interrupts. You will learn more about interrupts in section-04.
+
+### STM32 Example: Using Button Interrupts to Turn On an LED
+TODO
+
+## 3. Timers
+TODO
+
+## 4. Analog-to-Digital Converters (ADC)
+TODO
+
+## 5. Direct Memory Access (DMA)
+TODO
+
+## 6. Serial Communication
+TODO
+
+## 7. Universal Asynchronous Receiver/Transmitter (UART)
+TODO
+
+## 8. Serial Peripheral Interface (SPI)
+TODO
+
+## 9. Inter-Integrated Circuit (I2C)
+TODO
+
+## 10. Controller Area Network (CAN)
+TODO
+
