@@ -24,6 +24,13 @@ Once you feel like you have a good grasp on syntax, program structure, and progr
 
 **Goal:** Teach the core features of C relevant to embedded development without assuming prior C experience.
 
+## You should already know...
+
+- General purpose programming language syntax
+- How to use git
+- How to use VS Code
+- How to count to 10
+
 ---
 
 ## 0. Binary, bitwise and logic.
@@ -1082,6 +1089,8 @@ Use #define only for compile-time constants, preprocessor flags, or conditional 
 ### The big idea
 
 Before your written `.c` file is turned into something that actually runs on the CPU, it must be preprocessed, compiled, the assembled, then linked, then loaded. Only then can it be ran.
+
+Here we will use the GNU C Compiler, part of the GNU Compiler Collection aka GCC.
 
 #### The preprocessor will:
 
