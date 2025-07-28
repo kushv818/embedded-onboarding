@@ -51,6 +51,8 @@ Without computer architecture, you're programming blindly.
 
 ### Armv8 ISA
 
+### Instruction types and formats
+
 ### QEMU
 
 ### Application Binary Interface
@@ -89,6 +91,8 @@ Without computer architecture, you're programming blindly.
 
 ### Memory Map
 
+### Memory Alignment
+
 ### Stack Frames
 
 ## 4. Interrupts and Execution
@@ -115,7 +119,9 @@ Without computer architecture, you're programming blindly.
 
 ### Linkerscript
 
-### GDB and Disassembly
+### GDB: GNU Debugger
+
+### Dissassembly: `nm`, `readelf` and `objdump`
 
 ### Watchpoints and Breakpoints
 

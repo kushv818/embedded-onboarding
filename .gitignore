@@ -55,3 +55,8 @@ Mkfile.old
 dkms.conf
 
 .vscode/
+
+# Customs
+
+section-02/s-exercises/exercise5/vault.c
+section-02/s-exercises/exercise5/Makefile
