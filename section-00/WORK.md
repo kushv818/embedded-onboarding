@@ -43,7 +43,7 @@ Run `git remote -v` in the directory. You should get links to repositories that 
 2\. Inside that file `submit.md` answer the following questions:
 
 - Run a command line terminal that does both of the following:
-  - lists **all** files in that directory **and**
+  - lists **all** files in the parent directory (`..`) **and**
   - only prints files that match the expression `\.git`.
 - What command did you run?
 
