@@ -41,7 +41,7 @@ Before you start, set up your environment if you haven't done so already. Go to 
 1. Do this in the same C file as (1) and (2).
 2. `qsort` is a C standard library function that implements a sorting algorithm for arrays of arbitrary objects according to a user-provided comparison function.
    - Write the user-provided three-way comparison function for `int` data type.
-3. Call `qsort` on the dynamiclaly alloacted buffer from exercise 2.
+3. Call `qsort` on the dynamically allocated buffer from exercise 2.
 
 ## Exercise 4: Blinky
 
