@@ -25,25 +25,8 @@ GPIOs can be programmed for various tasks. You can configure a GPIO to be either
 
 >You can also use GPIO inputs and outputs to emulate digital communication protocols using a technique known as [bit-banging](<https://en.wikipedia.org/wiki/Bit_banging>).
 
-### STM32 Example: Using a Button to Turn On an LED
-
-Below is an example on how to read a input from a button and output to a LED using GPIO pins in your main loop. If you have an STM32, you can try this out but you would need to first change the pin assignments to your respective GPIO pins in your .ioc file using STM32CubeMX.
-
-```C
-// Assume: Button on GPIOA Pin 0, LED on GPIOC Pin 13
-
-while (1)
-{
-    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) // Button pressed
-    {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET); // Turn on LED
-    }
-    else
-    {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET); // Turn off LED
-    }
-}
-```
+### Exercise 1: Using a Button to Turn On an LED
+Navigate to ```WORK.md``` in this section and begin the first exercise.
 
 ### Using GPIO with Analog Signals
 
@@ -112,7 +95,7 @@ While the main program is running, an **IRQ** or **Interrupt Request** signal wi
 
 ### Polling Vs Interrupts
 
-In [1. GPIO](#1-gpio) you were able to learn about how GPIOs can read digital signals from external peripherals such as buttons. Using this knowledge, if you wanted to read the input of a button to turn on an LED by constantly checking the state of the button in the main loop in a method known as **Polling**.
+In [1. GPIO](#1-gpio) you were able to learn about how GPIOs can read digital signals from external peripherals such as buttons. Using this knowledge, if you wanted to read the input of a button to turn on an LED by constantly checking the state of the button in the main loop in a method known as **Polling**, which is what you did in [Exercise 1](#exercise-1-using-a-button-to-turn-on-an-led).
 
 Polling can be very easy to implement and is easily understandable and able to be debugged, but it consumes CPU usage and power because it would constantly run in the background. Another disadvantage to polling is that it cannot handle time-critical tasks, and it may miss events if it is polling too slowly. 
 
@@ -124,8 +107,8 @@ Interrupts can solve a lot of the issues mentioned above, but the disadvantages 
 
 This section went over a basic introduction to interrupts. You will learn more about interrupts in section-04.
 
-### STM32 Example: Using Button Interrupts to Turn On an LED
-TODO
+### Exercise 2: Using Button Interrupts to Turn On an LED
+Navigate to ```WORK.md``` in this section and begin the second exercise.
 
 ## 3. Timers
 TODO
