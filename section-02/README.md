@@ -139,6 +139,10 @@ In big-endian systems, the most significant byte comes first.
 
 ### What is an instruction
 
+Because assembly language is often 1:1 correlated with actual machine language (as in 1s and 0s), an assembly instruction usually corresponds to one machine instruction.
+
+Because all\* computers are some combination of digital electronics, the machine instruction must be comprised of only two logic levels: voltage high and voltage low, or as we use: 1s and 0s.
+
 ### Instruction types and formats
 
 ### QEMU

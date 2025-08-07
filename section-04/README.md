@@ -45,3 +45,9 @@ Generally, the kernel is the second thing loaded into your computer (following t
 Read this: https://cpu.land/
 
 ## Types
+
+### General Purpose Operating System
+
+### Real-time Operating Systems
+
+## Threads
