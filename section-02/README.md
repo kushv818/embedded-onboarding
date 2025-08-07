@@ -6,6 +6,18 @@ This section teaches you how to build a [Minecraft redstone computer.](https://w
 
 You will also learn how a computer is structured, how memory works, how to program in assembly and how to take advantage of these characteristics.
 
+In these tutorials, we will be studying the ARM architecture, which is a Reduced Instruction Set Computer (RISC) architecture. More specifically, we will be developing using ARMv6-M and similar families of assembly to supplement your learning of hardware and software.
+
+In contrast, the x86 architecture, which you may be more familiar with due to it being a product of [Intel](https://en.wikipedia.org/wiki/Intel_8086) and [AMD](https://en.wikipedia.org/wiki/Opteron), is a Complex Instruction Set Computer (CISC).
+
+The primary goal of CISC architecture is to complete a task in as few lines of assembly as possible. This is achieved by building processor hardware that is capable of understanding and executing a series of operations. Thus, as the name suggests, it has a more complex instruction set.
+
+On the other hand, the RISC school of thought strives to only use simple instructions that can be executed within one clock cycle. More accurately, it aimrs to use a small, regular set of simple instructions that are easy to **pipeline** and optimize in hardware. This simplicity enables more predictable performance and efficient instruction execution, often within a single clock cycle. This means that developers will be writing more lines of assembly per task, but it also means that we as developers have more control over the software we execute.
+
+Unfortunately, despite the advantages of RISC based processing, RISC chips took over a decade to gain a foothold in the commercial world. This was largely due to a lack of software support that companies in the early 1990's were not willing to invest in...
+
+There are many caveats to each design theory, and in practice, modern architectures often incorporate elements of both. However, understanding these core philosophies gives you the insight needed to reason about performance, efficiency, and system design.
+
 ## You should already know...
 
 - C language fundamentals
@@ -47,9 +59,51 @@ You might have guessed by now that you will be writing assembly in this section.
 
 Without computer architecture, you're programming blindly.
 
+## 0.1 Some prerequisite topics
+
+### Clock
+
+The clock is the heartbeat of any computer and produces a steady, square wave output from either an internal crystal oscillator or an external one.
+
+Intuitively, we know that computers are clock controlled because if we were to run an empty loop
+
+```C
+for (int i = 0; i < 1000000; ++i); // one million times
+```
+
+though this _appears_ to execute almost instantly, we know that it doesn't. For me, it takes 0.000681 seconds. If I ran
+
+```C
+for (int i = 0; i < 50000000; ++i); // fifty million times
+```
+
+I can see it takes 0.022914 seconds, which is longer.
+
+Even though these loops “do nothing,” the CPU still executes multiple instructions per iteration: incrementing the counter, comparing it to the limit, branching — and each of those operations consumes clock cycles. The work is invisible to the user, but it's still happening step-by-step in hardware.
+
+---
+
+The clock signal is a digital signal (meaning it has only 2 logic levels: 0 and 1) and looks like this: especially registers and memory.
+
+```
+Time   →      0   1   2   3   4   5   6   7   8   9   10
+Level  →     ───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───
+                └───┘   └───┘   └───┘   └───┘   └───┘
+Binary →      1   0   1   0   1   0   1   0   1   0   1
+
+```
+
+Let's talk about the picture. Between time 0 and time 1 (similarly between time 3 and 4 or time 7 and 8) the clock goes from logic level 0 to logic level 1. We call this a rising edge. Conversely, between time 1 and time 2, the logic level goes from 1 to 0. We call this the falling edge of the clock.
+
+Many components of the computer are controlled by the rising edge of the clock:
+
+### How we measure a computer's performance
+
+### Endianness
+
 ## 1. The Assembly Language
 
-### Armv8 ISA
+### What is an instruction
 
 ### Instruction types and formats
 
@@ -67,9 +121,23 @@ Without computer architecture, you're programming blindly.
 
 ## 2. Register File
 
+The concept of computer registers are essential to computer architecture as a whole. The register file is the collection of registers organized within the central processing unit (CPU).
+
 ### Registers
 
+Registers are areas in the CPU where data can be processed. CPUs don’t operate on memory directly, but instead data is loaded into registers, processed, and written back to memory. In assembly language, generally, you cannot directly copy data from one memory location to another without first passing that data through a register.
+
+Registers are normally measured by the number of bits they can hold, and denote that computers
+
+Registers are often the smallest structure of memory any computer can use.
+
+### General Purpose Registers
+
+The first type of register is what is known as a General Purpose Register (GPR). GPRs are referred to as general purpose because they can contain either data, in this case up to a 64-bit value, or a memory address (a pointer). A value in a GPR can be processed through operations like addition, multiplication, shifting, etc.
+
 ### Special Registers
+
+The second type of registers are special registers. These generally do not hold data but exist to maintain the state of execution
 
 #### Program Counter
 
