@@ -65,21 +65,25 @@ Without computer architecture, you're programming blindly.
 
 The clock is the heartbeat of any computer and produces a steady, square wave output from either an internal crystal oscillator or an external one.
 
-Intuitively, we know that computers are clock controlled because if we were to run an empty loop
+Intuitively, we know that computers are clock controlled because if we were to run an empty loop like so:
 
 ```C
 for (int i = 0; i < 1000000; ++i); // one million times
 ```
 
-though this _appears_ to execute almost instantly, we know that it doesn't. For me, it takes 0.000681 seconds. If I ran
+Though this _appears_ to execute almost instantly, we know that it doesn't. For me, it takes 0.000681 seconds. If I ran
 
 ```C
 for (int i = 0; i < 50000000; ++i); // fifty million times
 ```
 
-I can see it takes 0.022914 seconds, which is longer.
+I can see it takes 0.022914 seconds, which is longer. While it's not exactly 50 times slower, (it's about 33 times slower), we can see that even though these loops “do nothing,” the CPU still executes multiple instructions per iteration:
 
-Even though these loops “do nothing,” the CPU still executes multiple instructions per iteration: incrementing the counter, comparing it to the limit, branching — and each of those operations consumes clock cycles. The work is invisible to the user, but it's still happening step-by-step in hardware.
+- incrementing the counter,
+- comparing it to the limit,
+- branching
+
+and each of those operations consumes clock cycles. The work is invisible to the user, but it's still happening step-by-step in hardware.
 
 ---
 
@@ -95,11 +99,41 @@ Binary →      1   0   1   0   1   0   1   0   1   0   1
 
 Let's talk about the picture. Between time 0 and time 1 (similarly between time 3 and 4 or time 7 and 8) the clock goes from logic level 0 to logic level 1. We call this a rising edge. Conversely, between time 1 and time 2, the logic level goes from 1 to 0. We call this the falling edge of the clock.
 
-Many components of the computer are controlled by the rising edge of the clock:
+**Many components of the computer are controlled by the rising edge of the clock, such as registers and memory.**
+
+Without diving too much into digital circuits, the clock is one of the core components of any computer.
+
+Question for you: if the clock is purely in control of how quickly my CPU can execute something, why can't we just crank up the clock speed for more performance?
+
+Answer: Let's say signals propagated instantly, we have unlimited money for the electricity bill and you had a cooling system capable of swapping heat at 100% efficiency. Then yes, we can do this.
+
+But unfortunately, these conditions do not hold in the real world.
 
 ### How we measure a computer's performance
 
+A computer's performace is measured by the following ratio:
+
+$$
+\frac{\text{time}}{\text{program}}
+$$
+
+"How much time does it take to execute this program?"
+
+But this is a very broad question and can't do much with it, so we can expand the original equation as such:
+
+$$
+\frac{\text{time}}{\text{program}} = \frac{\text{time}}{\text{cycle}} \times\frac{\text{cycles}}{\text{instruction}} \times \frac{\text{instructions}}{\text{program}}
+$$
+
+And now this is a much more solvable equation.
+
 ### Endianness
+
+Endianness basically describes the placement of the most signficant bit and the least signficant bit (obviously they must be on the opposite side of each other).
+
+In little-endian systems, the least significant byte is stored first (at the lowest memory address).
+
+In big-endian systems, the most significant byte comes first.
 
 ## 1. The Assembly Language
 
@@ -116,8 +150,6 @@ Many components of the computer are controlled by the rising edge of the clock:
 ### Calling Conventions
 
 ### Inline Assembly
-
-### Endianness
 
 ## 2. Register File
 
