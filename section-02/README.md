@@ -163,25 +163,53 @@ The concept of computer registers are essential to computer architecture as a wh
 
 Registers are areas in the CPU where data can be processed. CPUs don’t operate on memory directly, but instead data is loaded into registers, processed, and written back to memory. In assembly language, generally, you cannot directly copy data from one memory location to another without first passing that data through a register.
 
-Registers are normally measured by the number of bits they can hold, and denote that computers
+Registers are normally measured by the number of bits they can hold, and denote that computers bit width; for example, a 32 bit computer has 32 bit registers.
 
-Registers are often the smallest structure of memory any computer can use.
+Registers are often the smallest structure of memory any computer can use. Registers are not cache, and cache memory is something else entirely.
 
 ### General Purpose Registers
 
 The first type of register is what is known as a General Purpose Register (GPR). GPRs are referred to as general purpose because they can contain either data, in this case up to a 64-bit value, or a memory address (a pointer). A value in a GPR can be processed through operations like addition, multiplication, shifting, etc.
 
+General purpose registers can be thought of as your scratch paper. It largely does not matter what a general purpose register holds as long as the concept of execution remains untouched; they are flexible, and as the name suggests, multi-purpose.
+
 ### Special Registers
 
-The second type of registers are special registers. These generally do not hold data but exist to maintain the state of execution
+The second type of registers are special registers. These generally do not hold data but exist to maintain the state of execution for a program. Most computer systems have these registers.
 
-#### Program Counter
+#### Program Counter (PC)
 
-#### Stack Pointer
+The program counter register points (i.e. holds the address) to the current instruction being executed. It is the CPU’s built-in tracker for where it is in your program. It always holds the memory address of the next instruction the CPU will run.
 
-#### Link Register
+Every time the CPU completes an instruction, the PC moves forward to the next one. If you run a branch or jump, the PC is updated with a new address so the CPU can continue somewhere else.
 
-#### Other reserved registers
+#### Stack Pointer (SP)
+
+The stack pointer points to the top of the stack. The stack holds your saved general purpose registers and the return address. Like in section 1, when the Stack Pointer exceeds your allocated RAM region for the stack, you get stack overflow and the memory it reads is no longer valid, which will either trigger a segfault (only on computers with memory protection) or silently fail (more likely with embedded cores).
+
+#### Link Register (LR)
+
+The link register holds the return address of a function. Returning from a function often involves moving the contents of LR into PC. When a function is called, the CPU needs to remember where to come back to after the function finishes. Instead of always pushing that address onto the stack, many architectures have a dedicated link register for this purpose.
+
+### Other reserved registers
+
+Sometimes certain architectures have more reserved registers. Some are operating system reserved, sometimes not.
+
+ARM has a few more special registers that are largely architecture-dependent that should be mentioned here. These are known as program status registers (PSR). Physically speaking, the PSR is actually three registers combined into one to save space.
+
+#### Arithmetic flag PSR (APSR)
+
+holds condition flags from arithmetic/logical ops, which can be one of `N` for negative, `Z` for zero, `C` for carry, and `V` for overflow.
+
+#### Interrupt PSR (IPSR)
+
+holds the exception number of the currently running handler. 0 means the CPU is running in Thread mode (normal program execution). Nonzero values indicate Handler mode — the CPU is servicing an exception or interrupt.
+
+For example, `IPSR` = `16` means that the SysTick handler is running. `IPSR` = `3` means that the HardFault handler is running. This is useful for debugging which interrupt you’re in or writing code that behaves differently depending on whether you’re in normal execution or interrupt context.
+
+#### Exectution PSR (EPSR)
+
+holds the execution state. It's main jobs are to keep the T-bit set to indicate Thumb execution and track if-then blocks' progress and condition. As a developer, you do not have to worry about this too much, as it is mostly handled by the computer for you.
 
 ### Hardware Registers with Memory Mapped I/O
 
