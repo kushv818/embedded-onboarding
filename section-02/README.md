@@ -213,9 +213,102 @@ holds the execution state. It's main jobs are to keep the T-bit set to indicate 
 
 ### Hardware Registers with Memory Mapped I/O
 
+If you remember the `volatile` example from the previous section, I explained why the `volatile` keyword has to be used when accessing memory-mapped hardware registers, to prevent the compiler from optimizing away reads and writes that have real hardware effects.
+
+That was an example of accessing hardware through registers. We are going to extend that by explaining memory mapped i/o.
+
 ### GPIO Example
 
+Recall this example:
+
+```C
+#define GPIOA_ODR   (*(uint32_t*)0x48000014) // NO volatile!
+
+int main(void) {
+    while (1) {
+        GPIOA_ODR |=  (1 << 5); // set PA5 high
+        GPIOA_ODR &= ~(1 << 5); // set PA5 low
+    }
+}
+```
+
+Let's fix it to include the `volatile` keyword like it's supposed to:
+
+```C
+#define GPIOA_ODR   (*(volatile uint32_t*)0x48000014) // no opts now
+
+int main(void) {
+    while (1) {
+        GPIOA_ODR |=  (1 << 5); // set PA5 high
+        GPIOA_ODR &= ~(1 << 5); // set PA5 low
+    }
+}
+```
+
+On an ARM Cortex-M microcontroller, the chip vendor defines a **memory map** — a table assigning specific address ranges to different peripherals.
+For example, part of the address space might look like this:
+
+| Address range      | Peripheral  |
+| ------------------ | ----------- |
+| `0x40000000` – ... | Timers      |
+| `0x40010000` – ... | USARTs      |
+| `0x48000000` – ... | GPIO Port A |
+| `0x48000400` – ... | GPIO Port B |
+
+Look, here's a familiar diagram:
+
+<img src="../assets/2/mmio_stm32.png" alt="GPIO Block" width="600">
+
+<img src="../assets/2/apbmmio.png" alt="GPIO Block" width="550" height="400">
+
+Within the GPIO block for Port A, there are multiple **control registers** at fixed offsets:
+
+- `MODER` (mode configuration)
+- `OTYPER` (output type)
+- `IDR` (input data)
+- `ODR` (output data)
+
+In our example:
+
+```c
+#define GPIOA_ODR (*(volatile uint32_t*)0x48000014)
+```
+
+- `0x48000000` is the base address for Port A’s register block.
+- `0x14` is the offset to the **Output Data Register** (ODR).
+- Dereferencing that address (`*`) lets you read or write the 32-bit register directly.
+- Bit 5 in that register controls PA5’s output state — setting it drives the pin high, clearing it drives the pin low.
+
+When the CPU executes:
+
+```c
+GPIOA_ODR |= (1 << 5);
+```
+
+it:
+
+1. Reads the 32-bit word at address `0x48000014` from the peripheral bus.
+2. Modifies the bit pattern in a CPU register.
+3. Writes the modified word back to the same address, which updates the GPIO output latch.
+4. The GPIO hardware then changes the electrical state of the PA5 pin.
+
+This is why we say **peripherals are accessed via registers** — each control or status register is just a fixed memory address wired to a hardware block, and reading/writing it controls or queries that block.
+
 ### Hardware Abstraction Layer
+
+A **Hardware Abstraction Layer** wraps these raw register manipulations in higher-level, vendor-provided functions:
+
+```c
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+```
+
+Internally, this might:
+
+1. Enable the GPIOA clock if it’s not already on.
+2. Access the correct set/reset register (e.g., `BSRR`) instead of doing a read-modify-write on `ODR`.
+3. Handle device-specific quirks for that pin or port.
+
+The result is cleaner, more portable code, at the cost of extra overhead. For performance-critical loops, direct register access (with `volatile`) is still the most predictable and efficient method.
 
 ## 3. Memory
 

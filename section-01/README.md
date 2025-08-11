@@ -610,7 +610,16 @@ C programs typically operate with 4 distinct memory regions.
 
 ### Memory in software
 
+With the perks of C, we can manipulate memory through software.
+
 ### Heap memory
+
+In embedded C, the **heap** is the RAM area used for dynamic allocation (`malloc`, `calloc`, `realloc`). It usually sits between the static data segment and the stack. It grows upward, while the stack grows downward. If they collide, the system crashes.
+
+Unlike stack variables, heap allocations persist until you `free()` them, which makes them slower, less predictable, and prone to fragmentation over long runtimes. Because embedded systems value predictability and stability, heap use is often minimized or avoided in favor of static or stack allocation.
+
+> [!NOTICE]  
+> There are many embedded C coding style standards that _prohibit_ the use of the heap. On DFR, we will NOT use the heap memory. We will allocate all memory at compile time.
 
 ### Stack memory
 
@@ -625,7 +634,7 @@ We can manage memory hardware using the C language via the following functions:
 
 ### Memory in hardware
 
-On the hardware side, there are two types of memory: **S**tatic RAM and **Dynamic** RAM.
+On the hardware side, there are two types of memory: **S**tatic RAM and **D**ynamic RAM.
 
 A brief overview on the differences:
 
@@ -895,6 +904,32 @@ void poll_dma() {
 DMA is not the only application for the `volatile` keyword! Some memory values might change during multithreading or even multicore operations.
 
 If the `volatile` keyword is not used, the compiler might re-use cached values or values within the hardware registers (which the compiler does automatically via compiler optimizations). Read more on compiler optimizations [here](https://en.wikipedia.org/wiki/Optimizing_compiler).
+
+Let's say we don't use `volatile` in this example:
+
+```C
+#define GPIOA_ODR   (*(uint32_t*)0x48000014) // NO volatile!
+
+int main(void) {
+    while (1) {
+        GPIOA_ODR |=  (1 << 5); // set PA5 high
+        GPIOA_ODR &= ~(1 << 5); // set PA5 low
+    }
+}
+```
+
+The compiler sees that `GPIOA_ODR` is just a normal pointer dereference and assumes nothing else can change it except this code.
+
+It notices that you write a value.
+
+Immediately after, you overwrite it again without ever using the old value for anything else. **Neither write result is read back or used in the program.**
+
+The optimizer decides: “The first write is pointless and the second one overwrites it immediately. I’ll just remove it.”
+
+So you must explicitly tell the compile to not optimize around these things.
+
+> [!NOTICE]  
+> You may be thinking to yourself: "Wait, this doesn't look like the C I've been looking at so far," but it is still C. We are just performing at bitwise operation on a memory-mapped hardware register. You'll see more later in section 2.
 
 ### `const`, `static`, and `extern`
 
