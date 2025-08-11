@@ -259,6 +259,8 @@ Look, here's a familiar diagram:
 
 <img src="../assets/2/mmio_stm32.png" alt="GPIO Block" width="600">
 
+Let's look closer at the AHB1 section. The AHB1 data bus is part of the MCU’s internal interconnect. When your code writes to a GPIO register, the CPU issues the write, the request travels over AHB1 to the GPIO peripheral, and the peripheral logic updates the pin state. This is how your code to toggle a GPIO Pin goes from executing in the ALU to the pin turning on and off.
+
 <img src="../assets/2/apbmmio.png" alt="GPIO Block" width="550" height="400">
 
 Within the GPIO block for Port A, there are multiple **control registers** at fixed offsets:
