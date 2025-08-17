@@ -104,3 +104,10 @@ This translates to a *Multiply-Accumulate* (MAC) operation, or *weighted sum*:
 $$v_{out}(n) = v_{in}(0)h(a) + v_{in}(1)h(a-1) + \cdots +v(a)h(0)$$
 
 This weighted sum must be repeated to find every point in $v_{out}$.
+
+# Challenge
+
+Implement a digital filter in C.
+Test it with the following:
+ - Use an impulse
+ - Use a sinusoid, and be sure the attenuation is as you expect
