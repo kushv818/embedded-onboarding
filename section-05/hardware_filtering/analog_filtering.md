@@ -2,12 +2,16 @@
 
 The purpose of filtering a signal is to get rid of noise.
 The process of "analog filtering" is the use of *reactive* components to influence the spectrum of a signal (and thus get rid of noise).
-This will document not be a comprehensive overview by any means, but should provide enough information to give you a general idea of how this works.
+Reactive components are components that store energy such as capacitors and inductors.
+
+
+This will document not be a comprehensive overview by any means, but should provide enough information to give you a general idea of how analog filtering works.
 
 # Signal Spectra
 
 When it comes to filtering, the most important question to ask is, "what am I filtering?"
 To answer this question, we look to the classic example of a square wave.
+
 To understand what filtering is, you must accept the notion that periodic signals are composed of a infinite sum of sinusoids, as described by the function's *Fourier Series*.
 
 ## Fourier Series
@@ -66,6 +70,7 @@ When you put a square wave through a low pass filter, you are attenuating the hi
 ![img](figures/lpf_tran_sim.JPG)
 
 The input voltage is the red waveform, and the output voltage is the green waveform.
+The edges of the waveform are rounded off because the high frequency elements of the waveform have been attenuated.
 
 # Filters and Frequency Response
 
@@ -74,7 +79,7 @@ Now that you have some understanding of what the spectrum of a signal is, we can
 ## RC Low Pass Filters
 
 The purpose of filtering is to rid a signal of unwanted noise. 
-One of the most common types of filters is the RC *low pass* filter. 
+One of the most common types of filters is the *RC low pass* filter. 
 The filter is an *RC* filter because it uses exclusively resistors and capacitors.
 The filter is called a *low pass* filter because it only allows low frequency energy to pass through it.
 
@@ -92,13 +97,15 @@ We study the performance of filters using a *Bode Plot* as shown below. This bod
 
 The bode plot is a representation of the filter's *frequency response*. That is, how the output compares to the input as a function of frequency. The is also commonly referred to as the spectrum of the *impulse response*.
 
-As before, the horizontal axis is frequency. The vertical axis however, is in decibels (dB). The reasons for this and what it is will become apparent later. There are two curves in the graph. The solid line represents the *magnitude*, and the faded line represents the *phase* response.
+As before, the horizontal axis is frequency. The vertical axis however, is in decibels (dB). The reasons for this will become apparent later. There are two curves in the graph. The solid line represents the *magnitude*, and the faded line represents the *phase* response.
 For our purposes, we will only focus on the magnitude response of a filter.
 
 At the low end of the spectrum, we see that the magnitude plot shows 0 dB.
 This means the signal is not *attenuated* by the filter, or that is is passed through without a drop in amplitude.
+This will be mathematically formalized in terms of a *transfer function* later.
 As the frequency increases beyond a critical point (-3 dBs), the signal becomes *attenuated* (the amplitude is reduced).
 The higher the frequency, the more strongly attenuated it becomes when it tries to pass through the filter.
+In other words, the higher the frequency, the more strongly the filter attenuates the signals.
 
 ## Transfer Functions and Decibels
 
@@ -116,7 +123,7 @@ $$20\log_{10}|H|$$
 Note that when the input is equal to the output:
 $$|H|=1\therefore20\log_{10}|H|=0 \text{ dB}$$
 
-The transfer function $H$ is defined in the frequency domain, which means it is a function of frequency.
+The transfer function $H$ is defined in the frequency domain, which means $H$ is a function of frequency. Therefore it is commonly written as $H(\omega)$ or $H(s)$
 
 # Applications
 
