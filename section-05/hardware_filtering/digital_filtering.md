@@ -22,6 +22,8 @@ $$v_{out}(n)=\sum_{i=0}^{a}v_{in}(i)h(n-i)$$
 $$v_{out}(n) = v_{in}(0)h(a) + v_{in}(1)h(a-1) + \cdots +v(a)h(0)$$
 
 This shows the relationship between the input voltage, the transfer function (aka the filter kernel $h(n)$ ).
+This mathematical process is called a *convolution*, which is a series of *Multiply and Accumulate* operations.
+See the Mathematical Basis for Digital Filtering section for details.
 
 ## Data Flow through a Digital Filter
 
@@ -31,8 +33,13 @@ Here are the steps that describe how data is processed in a digital filter:
  2. While data is filling the buffer, invalid convolutions are being computed, so these outputs are discarded.
  3. When the buffer is full, the MAC is performed on the entire buffer with the entire filter kernel.
  4. When this happens, the first valid $v_{out}(n)$ point is created.
- 5. This buffer is a First In, First Out (FIFO) buffer, so after the first valid point, the next $v_{in}$ point is shifted into the buffer, knocking the first one out.
+ 5. This buffer is a First In, First Out (FIFO) buffer, so after the first valid complete MAC, the next $v_{in}$ point is shifted into the buffer, knocking the first one out.
  6. The next MAC is performed, and this process repeats every time the ADC produces a new sample.
+
+## Implementations on the DFR Team
+
+On the DFR team, the CMISS library is used to compute the digital filters.
+The filter kernel is hard coded, and a pointer to the kernel data is passed to a function in the CMISS library that convolves the provided kernel with the input data.
 
 # Mathematical Basis for Digital Filtering
 
