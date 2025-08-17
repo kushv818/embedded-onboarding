@@ -22,7 +22,7 @@ Filters can be described mathematically with their transfer function:
 
 $$H(\omega) = \frac{V_{out}}{V_{in}}$$
 
-Recall that this ($H(\omega)$) is the *frequency domain* representation of the filter's *impulse response* which is referred to as $h(t)$. 
+Recall that this $(H(\omega))$ is the *frequency domain* representation of the filter's *impulse response* which is referred to as $h(t)$. 
 For this document, capital letters define a function expressed in the frequency domain, and lower case letters define a function expressed in the time domain.
 
 ## Convolution
@@ -44,7 +44,7 @@ The Leplace Transform and the Fourier Transform are mathematical means of conver
 The way to apply these transforms is outside the scope of this work.
 Pay close attention to these mathematical processes in your differential equations class.
 
-Now I direct your attention to the "$*$" operator in the following equation:
+Now I direct your attention to the " $*$ " operator in the following equation:
 
 $$v_{out}(t) = v_{in}(t)*h(t)$$
 
@@ -56,7 +56,22 @@ $$v_{out}(t) = v_{in}(t)*h(t) = \int_{-\infty}^{\infty}v_{in}(\tau)h(t-\tau)d\ta
 Since we are dealing with discrete functions, this integral becomes:
 
 $$v_{out}(t) = \int_{-\infty}^{\infty}v_{in}(\tau)h(t-\tau)d\tau\to$$
-$$v_{out}(n)=\sum_{i=0}^{\infty}v_{in}(n)h(n-i)$$
+$$v_{out}(n)=\sum_{i=0}^{\infty}v_{in}(i)h(n-i)$$
 
 This summation is what must be evaluated to run a digital filter.
-This can be thought of as an *inner product* or *dot product* of the discrete impulse response of the filter $h(n-i)$ and the input signal $v_{in}(n)$.
+This can be thought of as an *inner product* or *dot product* of the discrete impulse response of the filter $h(n)$ and the input signal $v_{in}(i)$.
+There is one subtle difference in that the impulse response is written as $h(n-i)$.
+This simply denotes that we reverse the order of $h$.
+
+### Example
+
+Let $a$ be the total length of the filter kernel $h$ and the input signal $v_{in}$.
+Then the convolution is written as:
+
+$$v_{out}(n)=\sum_{i=0}^{a}v_{in}(i)h(n-i)$$
+
+This translates to a *Multiply-Accumulate* (MAC) operation, or *weighted sum*:
+
+$$v_{out}(n) = v_{in}(0)h(a) + v_{in}(1)h(a-1) + \cdots +v(a)h(0)$$
+
+This weighted sum must be repeated to find every point in $v_{out}$.
