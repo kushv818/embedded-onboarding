@@ -49,11 +49,11 @@ From this series of graphs, it is clear to see that as $a\to\infty$, the graph b
 
 Below is a 1 kHz square wave:
 
-![img](figures/square_wave_1kHz.png)
+![img](figures/square_wave_1kHz.JPG)
 
 By applying what is known as the *Fourier Transform*, we can get a plot that tells us what sinusoids exist in a signal:
 
-![img](figures/square_wave_1kHz_bode.png)
+![img](figures/square_wave_1kHz_bode.JPG)
 
 This graph shows us what the *spectrum* of the signal is.
 At each peak, it shows us the relative amplitude of each sinusoid at their respective frequencies.
@@ -113,7 +113,8 @@ The magnitude response is written in dBs, and is defined as:
 
 $$20\log_{10}|H|$$
 
-Note that when the input is equal to the output, $|H|=1$, and $20\log_{10}|H|=0$ dB.
+Note that when the input is equal to the output:
+$$|H|=1\therefore20\log_{10}|H|=0 \text{ dB}$$
 
 The transfer function $H$ is defined in the frequency domain, which means it is a function of frequency.
 
