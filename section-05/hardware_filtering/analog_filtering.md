@@ -17,7 +17,7 @@ The *Fourier Series* is a specific mathematical representation of a periodic fun
 Any periodic function can be described as a linear combination (sum) of sinusoids.
 As an example, here is a square wave centered at the ground potential:
 
-![img](figures\square_wave.JPG)
+![img](section_05\hardware_filtering\figures\square_wave.JPG)
 
 This function is described by an infinite sum of sinusoids:
 $$f(x)=\lim_{a\to\infty}\sum_{n=1}^{a}\frac{\sin((2x-1)2\pi x)}{2x-1}$$
