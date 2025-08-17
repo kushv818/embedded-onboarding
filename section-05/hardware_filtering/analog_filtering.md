@@ -20,10 +20,13 @@ As an example, here is a square wave centered at the ground potential:
 ![img](figures/square_wave.JPG)
 
 This function is described by an infinite sum of sinusoids:
+
 $$f(x)=\lim_{a\to\infty}\sum_{n=1}^{a}\frac{\sin((2x-1)2\pi x)}{2x-1}$$
 
 This can be more simply written as:
+
 $$f(x)=\lim_{a\to\infty}\sum_{n=1}^{a}\frac{1}{n}\sin(2\pi nx)$$
+
 Where $n$ is a positive odd integer.
 
 If we let $a=1$, we see that this is the first sinusoid of the square wave, or more precisely, the *first harmonic*, whose frequency is at the *fundamental frequency* of the square wave.
@@ -127,6 +130,7 @@ Since we cannot store an infinite amount of data and we cannot sample the signal
 Since we are constrained by how fast we can sample, we are also constrained by what frequencies we can represent in the digital domain.
 Specifically, the maximum frequency we can faithfully represent using an ADC is at half the *sampling rate* ($f_s$).
 For example, if I sample a signal at 100 Sa/s, I can only faithfully represent signals up to 50 Hz. This is known as the *nyquist theorem*, and that maximum frequency is what I will refer to as the *nyquist frequency* ($f_n$).
+
 $$f_n=\frac{f_s}{2}$$
 
 When energy beyond this frequency exits in the signal, it shows up in the digital domain as an *alias* of itself. This alias shows up as energy between 0 and $f_n$ Hz, which is added noise that prevents us from reconstructing the signal correctly.
@@ -137,14 +141,20 @@ To design the filter, you consider the *quantization step* of your ADC.
 This is derived from the *resolution* of the ADC:
 
 $$q=\frac{1}{2^n}$$
+
 Where $n$ is the resolution of the ADC, typically 12 to 16 bits. (So $n=12$ or $n=16$ on a typical ADC). Use this number to determine how hard your filter must attenuate energy at the nyquist frequency.
 In dBs, the quantization step is represented as:
+
 $$A=20\log_{10}(q)$$
+
 For example, if you have a 16 bit ADC and are sampling at 80 MHz:
+
 $$f_n=\frac{80M\text{ Hz}}{2}=40M\text{ Hz}$$
+
 Where $M=10^6$
 
 Then you must attenuate everything at 40 MHz or more at least:
+
 $$20\log_{10}\left(\frac{1}{2^{16}}\right)=-96\text{ dB}$$
 
 Which is possible with the following circuit:
