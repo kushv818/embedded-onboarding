@@ -49,11 +49,11 @@ From this series of graphs, it is clear to see that as $a\to\infty$, the graph b
 
 Below is a 1 kHz square wave:
 
-![img](figures/square_wave_1kHz.JPG)
+![img](figures/square_wave_1khz.JPG)
 
 By applying what is known as the *Fourier Transform*, we can get a plot that tells us what sinusoids exist in a signal:
 
-![img](figures/square_wave_1kHz_bode.JPG)
+![img](figures/square_wave_1khz_bode.JPG)
 
 This graph shows us what the *spectrum* of the signal is.
 At each peak, it shows us the relative amplitude of each sinusoid at their respective frequencies.
