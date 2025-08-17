@@ -17,7 +17,7 @@ The *Fourier Series* is a specific mathematical representation of a periodic fun
 Any periodic function can be described as a linear combination (sum) of sinusoids.
 As an example, here is a square wave centered at the ground potential:
 
-![Diagram](figures\square_wave.JPG)
+![img](figures\square_wave.JPG)
 
 This function is described by an infinite sum of sinusoids:
 $$f(x)=\lim_{a\to\infty}\sum_{n=1}^{a}\frac{\sin((2x-1)2\pi x)}{2x-1}$$
@@ -28,33 +28,41 @@ Where $n$ is a positive odd integer.
 
 If we let $a=1$, we see that this is the first sinusoid of the square wave, or more precisely, the *first harmonic*, whose frequency is at the *fundamental frequency* of the square wave.
 
-![Diagram](figures\square_wave_2.JPG)
+![img](figures\square_wave_2.JPG)
 
 Notice how the waveform evolves as we add more harmonics. If we let $a=2$:
 
-![Diagram](figures\square_wave_3.JPG)
+![img](figures\square_wave_3.JPG)
 
 If we let $a=4$:
 
-![Diagram](figures\square_wave_4.JPG)
+![img](figures\square_wave_4.JPG)
 
 If we let $a=10$:
 
-![Diagram](figures\square_wave_5.JPG)
+![img](figures\square_wave_5.JPG)
 
 From this series of graphs, it is clear to see that as $a\to\infty$, the graph better approximates a square wave.
 
 Below is a 1 kHz square wave:
 
-![Diagram](figures\square_wave_1kHz.png)
+![img](figures\square_wave_1kHz.png)
 
 By applying what is known as the *Fourier Transform*, we can get a plot that tells us what sinusoids exist in a signal:
 
-![Diagram](figures\square_wave_1kHz_bode.png)
+![img](figures\square_wave_1kHz_bode.png)
 
 This graph shows us what the *spectrum* of the signal is.
 At each peak, it shows us the relative amplitude of each sinusoid at their respective frequencies.
 You may also think of each peak as a term in the fourier series, the amplitude and frequency of which will correspond to the graph.
+
+## So, What am I Filtering?
+
+When you put a square wave through a low pass filter, you are attenuating the higher frequency elements of the signal, and you loose the sharpness of the square wave. The effects are shown below:
+
+![img](figures\lpf_tran_sim.JPG)
+
+The input voltage is the red waveform, and the output voltage is the green waveform.
 
 # Filters and Frequency Response
 
@@ -69,7 +77,7 @@ The filter is called a *low pass* filter because it only allows low frequency en
 
 Here is an example of a low pass filter drawn up in LT Spice:
 
-![Diagram](figures\lpf.JPG)
+![img](figures\lpf.JPG)
 
 The voltage source represents the input of the filter, and the connection point between R2 and C2 is the output of the filter.
 
@@ -77,7 +85,7 @@ The voltage source represents the input of the filter, and the connection point 
 
 We study the performance of filters using a *Bode Plot* as shown below. This bode plot is graphed when LT Spice simulates the circuit presented previously.
 
-![Diagram](figures\lpf_bode.JPG)
+![img](figures\lpf_bode.JPG)
 
 The bode plot is a representation of the filter's *frequency response*. That is, how the output compares to the input as a function of frequency. The is also commonly referred to as the spectrum of the *impulse response*.
 
@@ -129,6 +137,15 @@ To design the filter, you consider the *quantization step* of your ADC.
 This is derived from the *resolution* of the ADC:
 
 $$q=\frac{1}{2^n}$$
-Where $n$ is the resolution of the ADC, typically 12 to 16 bits. (So $n=12$ or $n=16$ on a typical ADC). Use this number to determine how hard your filter must attenuate frequencies at the nyquist frequency.
+Where $n$ is the resolution of the ADC, typically 12 to 16 bits. (So $n=12$ or $n=16$ on a typical ADC). Use this number to determine how hard your filter must attenuate energy at the nyquist frequency.
 In dBs, the quantization step is represented as:
-$$20\log_{10}(q)$$
+$$A=20\log_{10}(q)$$
+For example, if you have a 16 bit ADC and are sampling at 80 MHz:
+$$f_n=\frac{80M\text{ Hz}}{2}=40M\text{ Hz}$$
+Where $M=10^6$
+
+Then you must attenuate everything at 40 MHz or more at least:
+$$20\log_{10}\left(\frac{1}{2^{16}}\right)=-96\text{ dB}$$
+
+Which is possible with the following circuit:
+![img](figures\lpf.JPG)
