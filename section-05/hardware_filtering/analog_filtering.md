@@ -73,13 +73,35 @@ Here is an example of a low pass filter drawn up in LT Spice:
 
 The voltage source represents the input of the filter, and the connection point between R2 and C2 is the output of the filter.
 
-### Bode Plots
+## Bode Plots
 
-We study the performance of filters using a *Bode Plot* as shown below:
+We study the performance of filters using a *Bode Plot* as shown below. This bode plot is graphed when LT Spice simulates the circuit presented previously.
 
 ![Diagram](figures\lpf_bode.JPG)
 
 The bode plot is a representation of the filter's *frequency response*. That is, how the output compares to the input as a function of frequency. The is also commonly referred to as the spectrum of the *impulse response*.
 
-As before, the horizontal axis is frequency, and the vertical axis is in decibels (dB). There are two curves in the graph. The solid line represents the *magnitude*, and the faded line represents the *phase* response.
-For our purposes, we will only focus on the magnitude respose.
+As before, the horizontal axis is frequency. The vertical axis however, is in decibels (dB). The reasons for this and what it is will become apparent later. There are two curves in the graph. The solid line represents the *magnitude*, and the faded line represents the *phase* response.
+For our purposes, we will only focus on the magnitude response of a filter.
+
+At the low end of the spectrum, we see that the magnitude plot shows 0 dB.
+This means the signal is not *attenuated* by the filter, or that is is passed through without a drop in amplitude.
+As the frequency increases beyond a critical point (-3 dBs), the signal becomes *attenuated* (the amplitude is reduced).
+The higher the frequency, the more strongly attenuated it becomes when it tries to pass through the filter.
+
+## Transfer Functions and Decibels
+
+The bode plot is derived from the application of kirchhoff's laws.
+This derivation is outside the scope of this work, but the point of the mathematics is to arrive at an expression for the output voltage $V_{out}$ and the input voltage $V_{in}$.
+
+Recall that the purpose of the bode plot is to compare the input to the output as a function of frequency. This gives rise to the concept of the *transfer function* ($H$), which is defined as the ratio of the output voltage to the input voltage:
+
+$$H=\frac{V_{out}}{V_{in}}$$
+
+The magnitude response is written in dBs, and is defined as:
+
+$$20\log_{10}|H|$$
+
+Note that when the input is equal to the output, $|H|=1$, and $20\log_{10}|H|=0$ dB.
+
+The transfer function $H$ is defined in the frequency domain, which means it is a function of frequency. It is also a complex number, which is why it has both a magnitude and a phase, though we will not need this information in this work.
