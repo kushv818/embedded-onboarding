@@ -104,4 +104,31 @@ $$20\log_{10}|H|$$
 
 Note that when the input is equal to the output, $|H|=1$, and $20\log_{10}|H|=0$ dB.
 
-The transfer function $H$ is defined in the frequency domain, which means it is a function of frequency. It is also a complex number, which is why it has both a magnitude and a phase, though we will not need this information in this work.
+The transfer function $H$ is defined in the frequency domain, which means it is a function of frequency.
+
+# Applications
+
+Now that we have discussed the basics of analog filtering, we are ready to discuss where it is applied on the DFR team.
+
+## Anti-Aliasing Filters
+
+On the DFR team, analog filters are specifically designed to support *Analog to Digital Converters* (ADCs), which are devices that digitize an analog signal.
+When we want to digitize a signal, our goal it to sample the signal repeatedly so that we know what the voltage is as it varies with time.
+Since we cannot store an infinite amount of data and we cannot sample the signal infinitely fast, we are constrained to a sampling rate.
+
+Since we are constrained by how fast we can sample, we are also constrained by what frequencies we can represent in the digital domain.
+Specifically, the maximum frequency we can faithfully represent using an ADC is at half the *sampling rate* ($f_s$).
+For example, if I sample a signal at 100 Sa/s, I can only faithfully represent signals up to 50 Hz. This is known as the *nyquist theorem*, and that maximum frequency is what I will refer to as the *nyquist frequency* ($f_n$).
+$$f_n=\frac{f_s}{2}$$
+
+When energy beyond this frequency exits in the signal, it shows up in the digital domain as an *alias* of itself. This alias shows up as energy between 0 and $f_n$ Hz, which is added noise that prevents us from reconstructing the signal correctly.
+
+To get around this problem, we use *Anti-Aliasing Filters*, which are low pass RC filters when used on the DFR team.
+
+To design the filter, you consider the *quantization step* of your ADC.
+This is derived from the *resolution* of the ADC:
+
+$$q=\frac{1}{2^n}$$
+Where $n$ is the resolution of the ADC, typically 12 to 16 bits. (So $n=12$ or $n=16$ on a typical ADC). Use this number to determine how hard your filter must attenuate frequencies at the nyquist frequency.
+In dBs, the quantization step is represented as:
+$$20\log_{10}(q)$$
