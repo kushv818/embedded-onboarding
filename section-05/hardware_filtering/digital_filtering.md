@@ -12,6 +12,21 @@ These properties include:
  - Linear phase response
  - Ideal or arbitrary magnitude response
 
+# Digital Filter Implementations
+
+The most important result from the section on the Mathematical Basis for Digital Filtering is the following mathematical algorithm:
+
+$$v_{out}(n)=\sum_{i=0}^{a}v_{in}(i)h(n-i)$$
+
+$$v_{out}(n) = v_{in}(0)h(a) + v_{in}(1)h(a-1) + \cdots +v(a)h(0)$$
+
+This shows the relationship between the input voltage, the transfer function (aka the filter kernel $h(n)$ ).
+
+Here are the steps that describe how data is processed in a digital filter:
+
+ 1. Data populates an $a$ point long buffer.
+ 2. 
+
 # Mathematical Basis for Digital Filtering
 
 Before diving into the specific applications on the DFR team, some time needs to be spent understanding what is happening mathematically.
