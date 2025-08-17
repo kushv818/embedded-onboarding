@@ -38,8 +38,8 @@ Here are the steps that describe how data is processed in a digital filter:
 
 ## Implementations on the DFR Team
 
-On the DFR team, the CMISS library is used to compute the digital filters.
-The filter kernel is hard coded, and a pointer to the kernel data is passed to a function in the CMISS library that convolves the provided kernel with the input data.
+On the DFR team, the CMSIS library is used to compute the digital filters.
+The filter kernel is hard coded, and a pointer to the kernel data is passed to a function in the CMSIS library that convolves the provided kernel with the input data.
 
 # Mathematical Basis for Digital Filtering
 
