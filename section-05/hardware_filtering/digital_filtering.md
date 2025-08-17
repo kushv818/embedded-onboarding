@@ -1,7 +1,7 @@
 # Introduction
 
 This document assumes you have read `analog_filtering.md`.
-Digital filtering is a conceptual extension of analog filtering, since it requires a stronger understanding of the calculus drives the process of filtering.
+Digital filtering is a conceptual extension of analog filtering, since it requires a stronger understanding of the calculus that drives the process of filtering.
 
 Digital filtering is the process of filtering in the *digital domain*.
 The general idea is to sample a voltage with an ADC through time, then mathematically process it to filter out noise.
@@ -15,3 +15,48 @@ These properties include:
 # Mathematical Basis for Digital Filtering
 
 Before diving into the specific applications on the DFR team, some time needs to be spent understanding what is happening mathematically.
+
+## The Transfer Function
+
+Filters can be described mathematically with their transfer function:
+
+$$H(\omega) = \frac{V_{out}}{V_{in}}$$
+
+Recall that this ($H(\omega)$) is the *frequency domain* representation of the filter's *impulse response* which is referred to as $h(t)$. 
+For this document, capital letters define a function expressed in the frequency domain, and lower case letters define a function expressed in the time domain.
+
+## Convolution
+
+When using digital filtering to process an input signal, $V_{in}$ is known and $H(\omega)$ is known. More will be said about deriving $H(\omega)$ later.
+That means we do not know $V_{out}$.
+This means we must solve the equation for $V_{out}$:
+
+$$V_{out} = V_{in}H$$
+
+This process appears to be a simple multiplication, but we must be careful to note that these functions are all defined in the frequency domain.
+It is possible to do the digital filtering in this manner, but it is more complicated because the user must take the fourier transform of the input data and multiply the result with the spectrum of the impulse response, also called the *filter kernel*.
+
+To reduce computational intensity and development time, we need to rewrite the equation using the *Inverse Leplace Transform*:
+
+$$\mathcal{L}^{-1}[V_{out} = V_{in}H] \to v_{out}(t) = v_{in}(t)*h(t)$$
+
+The Leplace Transform and the Fourier Transform are mathematical means of converting a function from the time domain to the frequency domain.
+The way to apply these transforms is outside the scope of this work.
+Pay close attention to these mathematical processes in your differential equations class.
+
+Now I direct your attention to the "$*$" operator in the following equation:
+
+$$v_{out}(t) = v_{in}(t)*h(t)$$
+
+This is *not* a multiplication, but a *convolution* of the two functions.
+You can think of convolution as a "fancy" multiplication, and it is defined as such:
+
+$$v_{out}(t) = v_{in}(t)*h(t) = \int_{-\infty}^{\infty}v_{in}(\tau)h(t-\tau)d\tau$$
+
+Since we are dealing with discrete functions, this integral becomes:
+
+$$v_{out}(t) = \int_{-\infty}^{\infty}v_{in}(\tau)h(t-\tau)d\tau\to$$
+$$v_{out}(n)=\sum_{i=0}^{\infty}v_{in}(n)h(n-i)$$
+
+This summation is what must be evaluated to run a digital filter.
+This can be thought of as an *inner product* or *dot product* of the discrete impulse response of the filter $h(n-i)$ and the input signal $v_{in}(n)$.
