@@ -41,6 +41,13 @@ Here are the steps that describe how data is processed in a digital filter:
 On the DFR team, the CMSIS library is used to compute the digital filters.
 The filter kernel is hard coded, and a pointer to the kernel data is passed to a function in the CMSIS library that convolves the provided kernel with the input data.
 
+# Analog to Digital Converters
+
+Analog to Digital Converters (ADCs) have one job: measure an analog signal at regular intervals and record the data.
+To understand this process better, imagine you are sitting on the side of the road, and you take a video of the cars going by.
+You might be aware of the camera's *frame rate*, which refers to the number of "pictures" per second that the camera is capturing.
+An ADC works much the same way in that is has a *sampling rate*.
+
 # Mathematical Basis for Digital Filtering
 
 Before diving into the specific applications on the DFR team, some time needs to be spent understanding what is happening mathematically.

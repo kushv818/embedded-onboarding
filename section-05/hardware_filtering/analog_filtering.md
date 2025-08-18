@@ -7,7 +7,7 @@ Reactive components are components that store energy such as capacitors and indu
 
 This will document not be a comprehensive overview by any means, but should provide enough information to give you a general idea of how analog filtering works.
 
-NOTE: Please read this document before `digital_filtering.md`.
+NOTE: Please read this document before reading `digital_filtering.md`.
 
 # Signal Spectra
 
