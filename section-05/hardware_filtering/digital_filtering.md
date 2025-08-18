@@ -48,6 +48,42 @@ To understand this process better, imagine you are sitting on the side of the ro
 You might be aware of the camera's *frame rate*, which refers to the number of "pictures" per second that the camera is capturing.
 An ADC works much the same way in that is has a *sampling rate*.
 
+This sampling rate is a very important design consideration due to the *nyquist theorem*, which is mentioned in the `analog_filtering.md` file.
+It also affects the design of the digital filter and anti-aliasing filter.
+
+## Challenge: Digitize a Signal
+
+In tinkercad, write a program to sample a signal using the ADC on an arduino.
+Here is some example code:
+``` c++
+#define DEL 100
+#define NUM 1000
+
+void setup()
+{
+  Serial.begin(115200);
+  int aout = 0;
+  
+  for (int i=0; i<NUM; i++)
+  {
+    aout = analogRead(0);
+    Serial.println(aout);
+    delay(DEL);
+  }
+}
+
+void loop()
+{
+  
+}
+```
+Here is an example design in tinkercad:
+
+![img](figures/tinker_cad_adc.JPG)
+
+Play around with this design in tinkercad.
+Note that the loop() function is required, even though it is not populated.
+
 # Mathematical Basis for Digital Filtering
 
 Before diving into the specific applications on the DFR team, some time needs to be spent understanding what is happening mathematically.
