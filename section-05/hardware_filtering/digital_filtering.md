@@ -81,7 +81,15 @@ Here is an example design in tinkercad:
 
 ![img](figures/tinker_cad_adc.JPG)
 
-Play around with this design in tinkercad.
+Play around with this design in tinkercad:
+ - Add additional potentiometers
+ - Change how the printing looks by using `Serial.print()` instead of `Serial.println()`
+ - Print the actual voltage instead of the ADC conversion code
+
+To find the voltage, assume the ADC code corresponds to a number between 0 and 5V.
+Let 1023 be 5V, and 0 be 0V.
+Use that information to correctly print the voltage.
+
 Note that the loop() function is required, even though it is not populated.
 
 # Mathematical Basis for Digital Filtering
