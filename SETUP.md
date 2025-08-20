@@ -139,15 +139,14 @@ Restart your computer.
 
 ## **3. Run and Flash**
 
-Clone repo: [https://github.com/DallasFormulaRacing/WheelBaseSensorSystem.git](https://github.com/DallasFormulaRacing/WheelBaseSensorSystem.git)
+1. Clone repo.
+2. Open in VSCode. Make sure the workspace path is the root of the directory.
 
-Open in VSCode. Make sure the workspace path is the root of the directory.
+3. Connect H7 Nucleo board via USB to USBC.
 
-Connect H7 Nucleo board via USB to USBC.
+4. Press CTRL + SHIFT + P. Then select “Tasks: Run Task”. Select “Run All”.
 
-Press CTRL + SHIFT + P. Then select “Tasks: Run Task”. Select “Run All”.
-
-Alternatively, just press CTRL + SHIFT + **B** to immediately run “Tasks: Run Build Task”.
+- Alternatively, just press CTRL + SHIFT + **B** to immediately run “Tasks: Run Build Task”.
 
 ## **4. Further Readings**
 
