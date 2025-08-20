@@ -16,10 +16,14 @@ Linux (Ub22) already has Adv Package Tool “apt” installed. If not, find it [
 
 ### **MSYS2 MinGW64 SHELL - Windows Users Only**
 
-Install MSYS2 MinGW64 Shell, which you already did in the step above.  
- Launch MSYS2 MinGW64 Shell.  
- For Windows, all of the following commands will be run on MinGW64. See:  
+Install MSYS2 MinGW64 Shell, which you already did in the step above.
+
+Launch MSYS2 MinGW64 Shell.
+
+For Windows, all of the following commands will be run on MinGW64. See:
+
 ![](assets/0/msys2.png)
+
 For all other operating systems, run on your preferred terminal.
 
 ### **Git -** Is a version control system that allows you to contribute your software.
