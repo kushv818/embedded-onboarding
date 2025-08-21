@@ -58,43 +58,45 @@ Read this: https://cpu.land/
 - Prioritizes determinism (tasks must run within specific timing guarantees).
 - Used in: automotive ECUs, robotics, aerospace, IoT devices.
 
-##RTOS Key Features
+## RTOS Key Features
+
 - Scheduler: Divides CPU time into slices and determines which task runs
 - Priority-absed execution: highest-priority task runs first at each tick
 - Concurrency illusion: even on a single core CPU, rapidly switching between tasks creates the illusion of concurrency
 
-
 ## Tasks, Threads and Processes
+
 - Task: What you want to get done (ex: read sensor data)
 - Thread: the CPU unit executing instructions - with its own program counter and memory - affiliated with a priority
 - Process: an instance of a program, could have multiple threads to achieve a task
 
 ## Tick Timer and Context Switching
+
 - Tick Timer: hardware timer that interrupts the CPU at fixed intervals - imagine a metronome at a fixed interval, and every tick, the scheduler looks at the threads, evaluates priorities, and determines what task needs to be ran, and then does the same for every subsequent tick
 - If the tasks switch, the system must save and restore the CPU registers, program counter and local variables for the next time the task has to be run - this is called a CONTEXT SWITCH
 
-
-
 ## Mutex + Semaphores
+
 Mutex:
+
 - Only one thread can enter the protected code at a time
 - Has atomic isntructions (take one Assembly instruction to execute, cannot be split up)
 
-Before getting into mutexes and semaphores, it is important to understand Critical Sections in code - or structures that are shared between multiple threads. 
+Before getting into mutexes and semaphores, it is important to understand Critical Sections in code - or structures that are shared between multiple threads.
 
 In short, a critical section is code that must run fully without any interruption.
-Say both Thread A and Thread B have access to a critical section of code at the same time. If both threads try to modify variables inside the critical section of code, they will end up interrupting each other and corrupt the variables. 
+Say both Thread A and Thread B have access to a critical section of code at the same time. If both threads try to modify variables inside the critical section of code, they will end up interrupting each other and corrupt the variables.
 The best way to solve this is through:
 
 Semaphore
+
 - A counter that controls access for multiple threads
-- Example: imagine there is a locked room (the critical section, and up to 3 people (threads) can enter it. There will be 3 keys (semaphore count) and each time a person enters the room, the key count will decrement by one, and if 3 people are in the room at the same tmie, no one is able to enter the room until a person exits and gives back the key. 
-This is essentially how semaphores work.
+- Example: imagine there is a locked room (the critical section, and up to 3 people (threads) can enter it. There will be 3 keys (semaphore count) and each time a person enters the room, the key count will decrement by one, and if 3 people are in the room at the same tmie, no one is able to enter the room until a person exits and gives back the key.
+  This is essentially how semaphores work.
 
 Scheduling Issues
+
 - Priority Inversion: When a low-priority task holds a mutex while a high-priority task waits -> can be solved with priority inheritance (more later)
 - Starvation: some tasks never get CPU time due to poor handling of delays with higher-priority tasks, meaning the lower-priority task never gets a chance to run. Solved with "aging" - periodically raising priority of starving tasks.
-- Deadlock: starvation on a system-wide scale, where no tasks are able to run because for example, one task may  be waiting for a mutex to be released from a task, while that task is waiting for a mutex to be released from another, and so on. 
-Time outs can help deadlock, where you halt all the tasks and try again later.
-
-
+- Deadlock: starvation on a system-wide scale, where no tasks are able to run because for example, one task may be waiting for a mutex to be released from a task, while that task is waiting for a mutex to be released from another, and so on.
+  Time outs can help deadlock, where you halt all the tasks and try again later.
