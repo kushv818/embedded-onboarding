@@ -126,6 +126,8 @@ brew install stlink             # macOS
 
 Implementation, design, and details are all up to you. Get creative!
 
+If you aren't sure, I recommend the circular buffer library as a starting point. If that sounds boring to you, try something else.
+
 #### Look at `projects` folder for more info on each idea.
 
 ### Instructions and requirements that apply to all projects:

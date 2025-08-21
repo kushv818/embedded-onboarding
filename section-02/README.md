@@ -326,17 +326,39 @@ The result is cleaner, more portable code, at the cost of extra overhead. For pe
 
 ### Systick
 
+Systick is simply a timer present inside ARM based microcontrollers. Basic purpose is to provide help generate accurate interrupts to different tasks that are running within an RTOS. You will learn more about RTOS in later sections.
+
+It has multiple uses aside from that. For example, many developers use it to generate an accurate delay function. Other benefits are portability where you can easily take an RTOS task from one microcontroler to a different one, and not end up changing the scheduling time and time dependent interrupts for tasks, as there can be different clock sources being used on the new microcontroler.
+
+If you wanna know more about it, refer to ARM's [online documentation](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dai0179b/ar01s02s08.html).
+
+If you don't know what is RTOS, [read the following article](https://www.freertos.org/about-RTOS.html) for a quick overview, or wait until section 4.
+
 ### Interrupt Service Routine
 
-### Vector table
+An IRQ is an **i**nterrupt **r**e**q**uest.
+
+It is the physical signal from a computer that raises the interrupt flag.
+
+An ISR is an **i**nterrupt **s**ervice **r**outine.
+
+It is the routine that runs when the interrupt is triggered.
+
+You can test an IRQ by running any utility in terminal and pressing CTRL+C before it finishes running.
+
+### External interrupt (EXTI)
+
+The EXTI (EXTernal Interrupt/Event) controller consists of up to 40 edge detectors for generating event/interrupt requests on STM32 devices. Each input line can be independently configured to select the type (interrupt or event) and the corresponding trigger event (rising, falling, or both).
 
 ### Nested Vectored Interrupt Controller (NVIC)
 
-### Exception handling and context switching
+The NVIC maps a nested interrupt to the instruction vector.
 
-### The clock
+The nested part allows for many interrupts to be enabled and assigned priorities. This automatically ensures that once an interrupt handler starts, it won't be interrupted by a new request, unless that request is even more important. This avoids a lot of the complication around enabling and disabling specific interrupts which could achieve the same thing.
 
-### Interplay with operating systems
+The vectored part: In a real time system, time to get to the first real instruction of an interrupt handler is important, so Vectored Interrupt Controllers were introduced to provide the right address straight off to the processor, saving a few instructions.
+
+A final feature of the M-class architectures is that since the stack push/pop is handled architecturally rather than in software, back to back exceptions are able to skip a redundant pop/push sequence - but this is nothing to do with the nested or vectored descriptions. Two exceptions at the same preemption level would tail-chain, if you had three at the same time then you would be able to chose the order of starting without needing to worry about one of them actually stopping an already running handler.
 
 ### Callback functions
 
