@@ -748,7 +748,7 @@ This zoom in focuses on an area of interest:
 
   - If you know how to count in base-16 (aka Hex), you know that `0x000F FFFF` is equivalent to `1048576` bits (divided by `8`) = `131072` bytes (divided by `1024`) = exactly `128` KB.
 
-- Anoter region of note in the zoom-in is the RAM, starting at address `0x2000 0000`. This is where dynamic memory is allocated.
+- Another region of note in the zoom-in is the RAM, starting at address `0x2000 0000`. This is where dynamic memory is allocated.
 
 #### Memory architecture will be discussed in more detail in later sections.
 
