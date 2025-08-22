@@ -135,6 +135,26 @@ In little-endian systems, the least significant byte is stored first (at the low
 
 In big-endian systems, the most significant byte comes first.
 
+![](../assets/2/endianness.png)
+
+Either one isn't necessarily better than the other. Endianness is primarily the result of architectural design choices made when the processor was developed.
+
+Each approach has trade-offs:
+
+**Little-endian**
+
+- Easier incremental byte addressing (useful in some low-level memory and pointer operations).
+
+- Commonly used in x86 and most modern general-purpose processors.
+
+- Makes certain arithmetic and data serialization tasks simpler.
+
+**Big-endian**
+
+- More human-readable in memory dumps since the most significant byte comes first (matching how numbers are typically written).
+
+- Historically common in network protocols and some older architectures (e.g., Motorola 68k, SPARC).
+
 ## 1. The Assembly Language
 
 ### What is an instruction
