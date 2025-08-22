@@ -24,7 +24,7 @@ There are many caveats to each design theory, and in practice, modern architectu
   - data types
   - functions, arguments and return values
   - control structures (`if`, `else`, `for`, `while`)
-  - how to use pointers
+  - how to use pointers (both function pointers and data pointers)
   - the different regions of memory and their purposes
     - how each region works
   - bitwise operations (`&`, `|`, `^`,` ~`, `<<`, `>>`)
@@ -58,6 +58,14 @@ You might have guessed by now that you will be writing assembly in this section.
    - Other debugging tools like `objdump` or `nm` are only incredibly useful if you know computer architecture.
 
 Without computer architecture, you're programming blindly.
+
+Pretend you are running code on a computer, with no pins, no peripherals, no anything. Just a CPU.
+
+Now we add pins whose logic levels are directly connected to the status of certain registers or memory locations.
+
+Now we have to manipulate the memory of those memory locations in order to change a pin's logic level.
+
+This is the basis of embedded development. It's still software, except now certain parts of your CPU are now connected to the outside world.
 
 ## 0.1 Some prerequisite topics
 
@@ -171,11 +179,7 @@ The number of bits or digits in a word (the word size, word width, or word lengt
 
 For example, for a 64 bit computer, the word size is 64 bits.
 
-### Instruction types and formats
-
-### Application Binary Interface
-
-### Calling Conventions
+### Instructions
 
 ### Inline Assembly
 
@@ -366,8 +370,6 @@ To be loaded into the CPU, data (or instructions) must make their way from disk 
 
 We don't really mess with the cache in embedded development, but the distinction between the register file (which we use a ton of in embedded development) is important.
 
-### Memory Map
-
 ### Memory Alignment
 
 It consists of three separate but related issues: data alignment, data structure padding, and packing.
@@ -452,6 +454,34 @@ The vectored part: In a real time system, time to get to the first real instruct
 A final feature of the M-class architectures is that since the stack push/pop is handled architecturally rather than in software, back to back exceptions are able to skip a redundant pop/push sequence - but this is nothing to do with the nested or vectored descriptions. Two exceptions at the same preemption level would tail-chain, if you had three at the same time then you would be able to chose the order of starting without needing to worry about one of them actually stopping an already running handler.
 
 ### Callback functions
+
+You pass a callback function to another function in the event that something happens, you invoke that function at that time to handle that event. Using the callback principle is like giving a business card to someone and telling: If you need me, call me back, the number is on the card.
+
+In programming words, a function leaves a reference of itself to another piece of code, e.g. by registering, and the other code uses this reference to call the (callback) function when appropriate, e.g. when some event occurs. In this case, a callback is also named an event handler.
+
+In C, they're implemented using **function pointers**. Here's an example:
+
+```C
+void populate_array(int *array, size_t arraySize, int (*getNextValue)(void))
+{
+    for (size_t i=0; i<arraySize; i++)
+        array[i] = getNextValue();
+}
+
+int getNextRandomValue(void)
+{
+    return rand();
+}
+
+int main(void)
+{
+    int myarray[10];
+    populate_array(myarray, 10, getNextRandomValue);
+    //...
+}
+```
+
+Here, the `populate_array` function takes a function pointer as its third parameter, and calls it to get the values to populate the array with. We've written the callback `getNextRandomValue`, which returns a random-ish value, and passed a pointer to it to `populate_array`. `populate_array` will call our callback function 10 times and assign the returned values to the elements in the given array.
 
 ## 5. Debuggers, Toolchains and Linkers
 

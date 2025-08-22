@@ -22,6 +22,8 @@ Write excercise 1 in assembly. Use ARM Cortex-M (Thumb-2) assembly and the `arm-
 
 What did you learn? Write your response in another file in this directory.
 
+Ensure both compile.
+
 ## Exercise 3: Interrupts and Callbacks
 
 Pt 1: Follow this tutorial: https://wiki.st.com/stm32mcu/wiki/Getting_started_with_EXTI
