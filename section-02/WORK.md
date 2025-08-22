@@ -28,6 +28,8 @@ Pt 1: Follow this tutorial: https://wiki.st.com/stm32mcu/wiki/Getting_started_wi
 
 Pt 2: Follow this tutorial: https://community.st.com/t5/stm32-mcus/how-to-use-register-callbacks-in-stm32/ta-p/580499
 
+Do the equivalent for the F030RE8 board, as the tutorials follow intructions for another board.
+
 ## Exercise 4: Capture the bug
 
 Welcome to the last exercise! This is a capture-the-flag style mini-game which will require you to hunt for hidden symbols.
@@ -35,3 +37,5 @@ Welcome to the last exercise! This is a capture-the-flag style mini-game which w
 You are given a black-box-esque ELF binary named `vault`. Embedded within the executable and linkable regions is a secret message.
 
 You must extract this secret message and decode it using `gdb`, `nm`, and `objdump`.
+
+You do not need a board for this.

@@ -444,5 +444,3 @@ A final feature of the M-class architectures is that since the stack push/pop is
 ### Dissassembly: `nm`, `readelf` and `objdump`
 
 ### Watchpoints and Breakpoints
-
-### Data Watchpoint & Trace (DWT) and Cycle Counting
