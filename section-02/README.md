@@ -396,7 +396,7 @@ uint8_t my_var = arr[4];
 
 Memory alignment is important for the way array access compiles down to assembly.
 
-```asm
+```assembly
 ; (this is a comment in assembly)
 
 ; load register byte (load data from mem into reg)
@@ -405,13 +405,13 @@ Memory alignment is important for the way array access compiles down to assembly
 
 So the assembly is saying to load 1 byte (8 bits) from memory at the address `r1 + 4` into register `r0`.
 
-A halfword is 1 byte. A `uint8_t` is also 1 byte. Using `ldrh` (halfword) here would load two adjacent elements (arr[4] and arr[5]) into one 16-bit register.
+A `uint8_t` is 1 byte. Using `ldrh` (halfword) here would load two adjacent elements (arr[4] and arr[5]) into one 16-bit register. Or four adjacent elements into one 32-bit register.
 
 This would not work without memory alignment of data types.
 
 ### Stack Frames
 
-Because stack space is EXTREMELY limited on microcntrollers, we do not use recursion (I have probably said this before, but you get to hear it again)
+Because stack space is EXTREMELY limited on microcntrollers, we do not use recursion (I have probably said this before, but you get to hear it again).
 
 ## 4. Interrupts and Execution
 
