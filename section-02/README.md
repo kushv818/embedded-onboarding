@@ -143,17 +143,37 @@ Because assembly language is often 1:1 correlated with actual machine language (
 
 Because all\* computers are some combination of digital electronics, the machine instruction must be comprised of only two logic levels: voltage high and voltage low, or as we use: 1s and 0s.
 
+### Word
+
+In computing, a word is any processor design's natural unit of data. A word is a fixed-sized datum handled as a unit by the instruction set or the hardware of the processor. Another way of saying this is that a computer's register can hold one word.
+
+The number of bits or digits in a word (the word size, word width, or word length) is an important characteristic of any specific processor design or computer architecture.
+
+For example, for a 64 bit computer, the word size is 64 bits.
+
 ### Instruction types and formats
 
-### QEMU
-
 ### Application Binary Interface
-
-### Word
 
 ### Calling Conventions
 
 ### Inline Assembly
+
+Inline assembly (typically introduced by the `asm` keyword) gives the ability to embed assembly language source code within a C program.
+
+If I wanted to use the `nop` operation (which does nothing), in a C file, I would use:
+
+```C
+asm("nop");
+
+// or
+__asm("nop");
+
+// or
+__asm__("nop");
+```
+
+It is provided by the `<stdio.h>` library.
 
 ## 2. Register File
 
@@ -316,11 +336,62 @@ The result is cleaner, more portable code, at the cost of extra overhead. For pe
 
 ### Cache
 
+Recall the memory in hardware section in the previous section
+
+Cache memory is smaller memory than main memory (RAM) and closer to the CPU. It's not to be confused with the register file, which is still it's own thing. Cache is bigger than the register file. Cache is implemented via SRAM, and main memory (RAM stick memory) is implemented via DRAM.
+
+Computers use the cache memory as an intermediary space between main memory and the register file as the register file is extremely limited in space but main memory is to slow for the CPU.
+
+To be loaded into the CPU, data (or instructions) must make their way from disk storage, main memory, the lower cache levels (L3), the higher cache levels (L1), and finally the register file. To unload, it follows the reverse of the pattern.
+
+We don't really mess with the cache in embedded development, but the distinction between the register file (which we use a ton of in embedded development) is important.
+
 ### Memory Map
 
 ### Memory Alignment
 
+It consists of three separate but related issues: data alignment, data structure padding, and packing.
+
+The CPU in modern computer hardware performs reads and writes to memory most efficiently when the data is naturally aligned, which generally means that the data's memory address is a multiple of the data size.
+
+For instance, in a 32-bit architecture, the data may be aligned if the data is stored in four consecutive bytes and the first byte lies on a 4-byte boundary. Each data type (e.g., char, int, double) often needs to be stored at an address that is a multiple of its size or a fixed alignment boundary.
+
+Arrays are contiguous blocks of memory. Knowing how arrays map to memory is critical when working close to the hardware.
+
+Elements of an array are stored one after the other in memory, with no gaps.
+
+In most expressions, the array name decays to a pointer to its first element.
+
+Consider the array:
+
+```C
+uint8_t arr[8] = {1,2,3,4,5,6,7,8};
+```
+
+Imagine you want to access the 5th element. You would do so like this:
+
+```C
+uint8_t my_var = arr[4];
+```
+
+Memory alignment is important for the way array access compiles down to assembly.
+
+```asm
+; (this is a comment in assembly)
+
+; load register byte (load data from mem into reg)
+  ldrb    r0, [r1, #4]
+```
+
+So the assembly is saying to load 1 byte (8 bits) from memory at the address `r1 + 4` into register `r0`.
+
+A halfword is 1 byte. A `uint8_t` is also 1 byte. Using `ldrh` (halfword) here would load two adjacent elements (arr[4] and arr[5]) into one 16-bit register.
+
+This would not work without memory alignment of data types.
+
 ### Stack Frames
+
+Because stack space is EXTREMELY limited on microcntrollers, we do not use recursion (I have probably said this before, but you get to hear it again)
 
 ## 4. Interrupts and Execution
 
@@ -344,7 +415,7 @@ An ISR is an **i**nterrupt **s**ervice **r**outine.
 
 It is the routine that runs when the interrupt is triggered.
 
-You can test an IRQ by running any utility in terminal and pressing CTRL+C before it finishes running.
+You can test an IRQ by running any utility in terminal and pressing CTRL+C before it finishes running. It will terminate the process. (Operating systems rabbit hole)
 
 ### External interrupt (EXTI)
 
