@@ -168,6 +168,7 @@ Then you must attenuate everything at 40 MHz or more at least:
 $$20\log_{10}\left(\frac{1}{2^{16}}\right)=-96\text{ dB}$$
 
 Which is possible with the following circuit:
+
 ![img](figures/lpf.JPG)
 
 # Challenge
