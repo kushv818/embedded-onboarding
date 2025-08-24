@@ -163,15 +163,15 @@ If an ADC is sampling at 12kHz, the ADC will only be able to read up to 6kHz, wh
 
 When using the ADC, you will get a value from $0$ to $2^N-1$, with $N$ being the resolution in the number of bits of the ADC. To convert this number into a voltage of type float or double, you would need to use the formula below.
 
-$$
-\text{V} = \frac{\text{Val}_\text{ADC}}{2^N - 1} * \text{V}_{\text{REF}}
-$$
 
 
+$$
+V = \frac{\text{ADC Value}}{2^N - 1} * V_\text{REF}
+$$
 
 Where:
 - $V$ is the measured voltage
-- $\text{Val}_\text{ADC}$ is the digital value read from the ADC
+- $\text{ADC Value}$ is the digital value read from the ADC
 - $N$ is the ADC resolution in bits
 - $V_{\text{REF}}$ is the reference voltage for the ADC (3.3V on STM32)
 
