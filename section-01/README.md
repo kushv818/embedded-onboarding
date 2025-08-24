@@ -489,11 +489,10 @@ typedef struct {
 ```C
 matrix_t matrix_transpose(matrix_t m) {
     matrix_t mt = create_matrix(m.cols, m.rows); //<- assume this has been implemented
-    if (!t.data) return t;
 
     for (int i = 0; i < m.rows; ++i) {
         for (int j = 0; j < m.cols; ++j) {
-            t.data[j * m.rows + i] = m.data[i * m.cols + j];
+            mt.data[j * m.rows + i] = m.data[i * m.cols + j];
         }
     }
 

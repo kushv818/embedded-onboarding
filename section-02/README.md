@@ -413,6 +413,14 @@ This would not work without memory alignment of data types.
 
 ### Stack Frames
 
+Every _routine_ creates a stack frame on stack memory. That
+
+From Wikipedia:
+
+> In computer science, a subroutine (also called procedure, function, routine, method, or subprogram) is a portion of code within a larger program that performs a specific task and is relatively independent of the remaining code.
+
+A routine is nothing but a sequence of code, intended for the execution of user programs and input/output operations. It can range from a subroutine, co-routine to a function. It is called repeatedly by other codes, during the execution of a program.
+
 Because stack space is EXTREMELY limited on microcntrollers, we do not use recursion (I have probably said this before, but you get to hear it again).
 
 ## 4. Interrupts and Execution
@@ -485,12 +493,189 @@ Here, the `populate_array` function takes a function pointer as its third parame
 
 ## 5. Debuggers, Toolchains and Linkers
 
+Working close to the hardware means you need the right tools to compile, link, flash, and debug your code effectively. This section introduces the key components in the embedded development toolchain and the basics of how to use them.
+
+## Toolchain
+
+A toolchain is a collection of tools that convert your source code into machine code and prepare it for execution on your target microcontroller. The most common ARM toolchain is GNU Arm Embedded Toolchain (`arm-none-eabi-`).
+
+| **Stage**      | **Tool**                | **Purpose**                                 |
+| -------------- | ----------------------- | ------------------------------------------- |
+| Preprocessing  | `arm-none-eabi-gcc`     | Expands macros, includes headers.           |
+| Compiling      | `arm-none-eabi-gcc`     | Converts C into assembly.                   |
+| Assembling     | `arm-none-eabi-as`      | Converts assembly into object files (`.o`). |
+| Linking        | `arm-none-eabi-ld`      | Combines object files into a single binary. |
+| Object copying | `arm-none-eabi-objcopy` | Converts ELF files into `.bin` or `.hex`.   |
+
+These tools are usually called automatically by your IDE (like STM32CubeIDE), but using them manually teaches you exactly what’s happening under the hood.
+
+However, when you want to switch to another IDE or text editor like VS Code or CLion (yes embedded development can be done on both of these), sometimes you will have to configure the toolchain yourself.
+
 ### Startup file
+
+Take a look at this [startup file from section 1](../section-01/blinky/startup_stm32f030x8.s)
+
+```C
+// This module performs:
+//   *                - Set the initial SP
+//   *                - Set the initial PC == Reset_Handler,
+//   *                - Set the vector table entries with the exceptions ISR address
+//   *                - Branches to main in the C library (which eventually
+//   *                  calls main()).
+```
+
+This sets the initial SP and PC, which are the stack pointer and program counter, respectively.
+
+Before `main()` runs, the microcontroller:
+
+- Initializes the stack pointer.
+
+- Sets up the vector table.
+
+- Zeroes .bss (uninitialized data).
+
+- Copies initialized variables into RAM.
+
+This process is handled by the startup file (usually written in assembly or C). You rarely edit this file directly, but you need to understand it for debugging issues like stack overflows or incorrect interrupt vectors.
 
 ### Linkerscript
 
+Take a look at this [linker file from section 1](../section-01/blinky/stm32f030r8tx_flash.ld)
+
+The linker script (`.ld` file) defines how your program is laid out in memory.
+Example sections:
+
+Flash – where your code and constants are stored.
+
+RAM – where variables, stack, and heap live.
+
+Vector table – where interrupt vectors are placed.
+
+A minimal linker script might specify:
+
+```linkerscript
+MEMORY
+{
+RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 8K
+FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 64K
+}
+```
+
+Let's dissect this:
+
+#### `MEMORY`: This block declares the available memory regions on your MCU.
+
+- Each region entry has:
+
+  - Name (e.g., FLASH, RAM)
+
+  - Attributes (like rx, rwx)
+
+  - Start address (ORIGIN)
+
+  - Size (LENGTH)
+
+`FLASH`: This is your program storage. Non volatile memory, meaning it does not lose data on power loss
+
+- `ORIGIN = 0x08000000`: Start address of flash in the STM32 memory map. I added an extra 0 here just for clarity; it's not `0x8000 0000`, it's `0x(0)800 0000`.
+
+- `LENGTH = 64K`: Total size is 64 kilobytes.
+
+- `rx` attributes: The `r` means it can be read from. The `x` means that whatever is in this region can be executed. It is similar to [`chmod`](https://man7.org/linux/man-pages/man1/chmod.1.html) syntax. It does not have `w` meaning that it cannot be edited during runtime.
+
+`RAM`: This is volatile memory.
+
+- `ORIGIN = 0x20000000`: Start address of RAM in the STM32 memory map.
+
+- `LENGTH = 8K`: Total size is 8 kilobytes. Not a lot of RAM for these microcontrollers.
+
+- `rwx` attributes: readable, writable, and executable. See above. This region of memory can be edited during run time, which makes sense, since the call stack is constantly growing and shrinking.
+
 ### GDB: GNU Debugger
 
-### Dissassembly: `nm`, `readelf` and `objdump`
+The GNU Debugger (GDB) is the primary tool for debugging embedded programs. When combined with a GDB server such as OpenOCD or ST-Link, it allows you to interact with a microcontroller in real-time.
+
+Typical Debugging Workflow:
+
+Build the binary with debug symbols
+Add the -g flag so the compiler includes debugging information:
+
+```sh
+arm-none-eabi-gcc -g -o main.elf main.c
+```
+
+Start a GDB server
+This is the bridge between your debugger and the microcontroller.
+Example with OpenOCD:
+
+```sh
+openocd -f interface/stlink.cfg -f target/stm32f0x.cfg
+```
+
+Connect GDB to the target
+In another terminal:
+
+```sh
+arm-none-eabi-gdb main.elf
+target remote :3333
+```
+
+### Dissassembly & Binary Analysis: `nm`, `readelf` and `objdump`
+
+Sometimes you need to analyze the compiled binary directly. These tools let you see exactly what the compiler produced and how memory is allocated.
+
+### 1. `nm`
+
+Lists all the symbols in the binary with their addresses and sizes:
+
+```
+arm-none-eabi-nm main.elf
+```
+
+Useful for:
+
+- Finding variable addresses
+
+- Checking function locations
+
+- Identifying unused symbols
+
+### 2. `readelf`
+
+Displays detailed ELF binary information:
+
+```
+arm-none-eabi-readelf -a main.elf
+```
+
+Useful for:
+
+- Inspect memory sections (`.text`, `.data`, `.bss`)
+
+- Check symbol tables
+
+- Verify the vector table location
+
+### 3. `objdump`
+
+Disassembles the binary to show the actual machine instructions:
+
+arm-none-eabi-objdump -d main.elf
+
+Useful for:
+
+- Debugging when source code isn’t available.
+
+- Verifying compiler optimizations.
+
+- Understanding exactly what the CPU will execute.
+
+### When to Use These Tools
+
+| Tool Name | Use Case                                                                               |
+| --------- | -------------------------------------------------------------------------------------- |
+| `nm`      | Track down addresses or confirm if a symbol exists.                                    |
+| `readelf` | Analyze memory layout or section sizes.                                                |
+| `objdump` | Dive into low-level execution flow for performance tuning or reverse-engineering bugs. |
 
 ### Watchpoints and Breakpoints

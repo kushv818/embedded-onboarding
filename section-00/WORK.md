@@ -36,7 +36,7 @@ Git will sometimes need credentials from the user in order to perform operations
 
 ## 6. Clone the repository to your local.
 
-Make sure its the right one; not the template.
+Make sure its the right one; not the template. Open this in the website or in VSCode. On VSCode, you can press CTRL+SHIFT+V or CMD+SHIFT+V to enter Markdown preview mode.
 
 ## 7. Submit for Section 00
 

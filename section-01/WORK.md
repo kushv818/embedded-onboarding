@@ -20,6 +20,26 @@ Before you start, set up your environment if you haven't done so already. Go to 
 4. Take this easy exercise as an opprtunity to fix your toolchain, compiler settings, IDE settings and more.
 5. Bonus: Swap to integers using pointers.
 
+## Exercise 1.1: Improving code
+
+Recall the matrix example from the reading.
+
+```C
+matrix_t matrix_transpose(matrix_t m) {
+    matrix_t mt = create_matrix(m.cols, m.rows); //<- assume this has been implemented
+
+    for (int i = 0; i < m.rows; ++i) {
+        for (int j = 0; j < m.cols; ++j) {
+            mt.data[j * m.rows + i] = m.data[i * m.cols + j];
+        }
+    }
+
+    return mt;
+}
+```
+
+How would you improve this code?
+
 ## Exercise 2: FizzBuzz
 
 1. Inside the file you used for exercise 1, make a function with signature ` FizzBuzz`

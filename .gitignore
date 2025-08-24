@@ -58,5 +58,6 @@ dkms.conf
 
 # Customs
 
-section-02/s-exercises/exercise5/vault.c
-section-02/s-exercises/exercise5/Makefile
+section-02/s-exercises/exercise4/vault.c
+section-02/s-exercises/exercise4/Makefile
+!section-02/s-exercises/exercise4/vault.elf
