@@ -146,7 +146,39 @@ $$
 $$
 
 ## 4. Analog-to-Digital Converters (ADC)
-TODO
+
+An **Analog-to-Digital Converter** or **ADC** is a peripheral that converts an analog signal, such as a voltage into a digital format that the microcontroller can use. Every ADC works by sampling a signal discretely at certain time points and converting it to a digital format in a process known as **Quantization**. 
+
+On the STM32, the ADC works using a **Successive Approximation Register** or **SAR**. The ADC will sample and hold the input voltage signal, and compare the sampled voltage to set internal voltage references using a binary search. 
+
+### Nyquist-Shannon Sampling Theorem
+
+When using an ADC, it is important to know the **Nyquist-Shannon Sampling Theorem**, which states that for any continuous-time signal, you would need to sample at a rate at least 2-times higher than its highest frequency component. This would mean if the highest frequency signal you are expecting to sample is 6kHz, you will need the ADC to sample at 12kHz at the minimum.  
+
+If an ADC is sampling at 12kHz, the ADC will only be able to read up to 6kHz, which will be your **Nyquist Frequency**. Any signals above the Nyquist Frequency will be read poorly and get mixed into your main signal in what is known as **Aliasing**.
+
+>You will learn more about analog and digital signal processing and how to prevent aliasing in section-05. 
+
+### Converting ADC Values to a Voltage
+
+When using the ADC, you will get a value from $0$ to $2^N-1$, with $N$ being the resolution in the number of bits of the ADC. To convert this number into a voltage of type float or double, you would need to use the formula below.
+
+$$
+V = \frac{\text{Val}_\text{ADC}}{2^N - 1} \times V_{\text{REF}}
+$$
+
+Where:
+- $V$ is the measured voltage
+- $\text{Val}_\text{ADC}$ is the digital value read from the ADC
+- $N$ is the ADC resolution in bits
+- $V_{\text{REF}}$ is the reference voltage for the ADC (3.3V on STM32)
+
+For example, if you have a 12-bit ADC ($N = 12$), a reference voltage of $3.3V$, and the ADC reads a value of $2048$:
+
+$$
+V = \frac{2048}{4095} \times 3.3V \approx 1.65V
+$$
+
 
 ## 5. Direct Memory Access (DMA)
 TODO
