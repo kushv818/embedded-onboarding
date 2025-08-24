@@ -147,23 +147,21 @@ $$
 
 ## 4. Analog-to-Digital Converters (ADC)
 
-An **Analog-to-Digital Converter** or **ADC** is a peripheral that converts an analog signal, such as a voltage into a digital format that the microcontroller can use. Every ADC works by sampling a signal discretely at certain time points and converting it to a digital format in a process known as **Quantization**. 
+An **Analog-to-Digital Converter** or **ADC** is a peripheral that converts an analog signal, such as a voltage into a digital format that the microcontroller can use. Every ADC works by sampling a signal discretely at a given rate. and converting it to a digital format in a process known as **Quantization**.  
 
-On the STM32, the ADC works using a **Successive Approximation Register** or **SAR**. The ADC will sample and hold the input voltage signal, and compare the sampled voltage to set internal voltage references using a binary search. 
+On the STM32, the ADC works using a **Successive Approximation Register** or **SAR**. The ADC will sample and hold the input voltage signal, and compare the sampled voltage to set internal voltage references using a binary search. To control the sampling rate, hardware timers are attached to the ADC and configured for it to sample at any given rate the user wants.  
 
 ### Nyquist-Shannon Sampling Theorem
 
 When using an ADC, it is important to know the **Nyquist-Shannon Sampling Theorem**, which states that for any continuous-time signal, you would need to sample at a rate at least 2-times higher than its highest frequency component. This would mean if the highest frequency signal you are expecting to sample is 6kHz, you will need the ADC to sample at 12kHz at the minimum.  
 
-If an ADC is sampling at 12kHz, the ADC will only be able to read up to 6kHz, which will be your **Nyquist Frequency**. Any signals above the Nyquist Frequency will be read poorly and get mixed into your main signal in what is known as **Aliasing**.
+If an ADC is sampling at 12kHz, the ADC will only be able to read up to 6kHz, which will be your **Nyquist Frequency**, which is represented as 1/2 your sampling rate. Any signals above the Nyquist Frequency will be read poorly and get mixed into your main signal in what is known as **Aliasing**.
 
 >You will learn more about analog and digital signal processing and how to prevent aliasing in section-05. 
 
 ### Converting ADC Values to a Voltage
 
 When using the ADC, you will get a value from $0$ to $2^N-1$, with $N$ being the resolution in the number of bits of the ADC. To convert this number into a voltage of type float or double, you would need to use the formula below.
-
-
 
 $$
 V = \frac{\text{ADC Value}}{2^N - 1} * V_\text{REF}
@@ -183,7 +181,9 @@ $$
 
 
 ## 5. Direct Memory Access (DMA)
-TODO
+Normally, having a peripheral accessing memory requires the CPU to handle every single transaction. With high speed data streams such as ADCs sampling thousands, maybe even millions of times per second, these operations can quickly bog down the CPU. Luckily, there exists a solution to offload these data transfer operations.
+
+**Direct Memory Access**, or **DMA** is a feature that allows a peripheral to interface directly with memory with minimal intervention from the CPU. 
 
 ## 6. Serial Communication
 TODO
