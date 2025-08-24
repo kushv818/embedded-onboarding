@@ -184,6 +184,9 @@ If you aren't sure, I recommend the circular buffer library as a starting point.
 - You must have a minimum of 7 **well-named, significant** commits. If you think your project can be finished under 7 commits, it is not hard enough.
 
   - Pull requests for merging features on branches is not required.
+  - Commit naming convention as outlined [here](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+  - Pull request naming convention as outlined [here](https://github.com/mozilla-mobile/firefox-ios/wiki/Pull-Request-Naming-Guide)
+    - PRs are optional, but follow this naming convention outside of this tutorial, too.
 
 - Create a `README.md` that aptly describes what your project does. Your `README.md` must also contain **all** of the following:
 

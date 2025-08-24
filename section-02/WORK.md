@@ -34,6 +34,9 @@ Do the equivalent for the F030RE8 board, as the tutorials follow intructions for
 
 ## Exercise 4: Capture the bug
 
+> [!IMPORTANT]
+> This exercise is experimental. You may run into OS-compatibility issues.
+
 Welcome to the last exercise! This is a capture-the-flag style mini-game which will require you to hunt for hidden symbols.
 
 You are given a black-box-esque ELF binary named `vault`. Embedded within the executable and linkable regions is a secret message.
