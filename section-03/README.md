@@ -61,7 +61,7 @@ Why? CAN uses a twisted pair of wires it communicated on, and this in combinatio
 
 Just like some microcontrollers may have SPI or UART pins, certain mcu's have a CAN core/CAN peripheral that are assigned CAN_TX and CAN_RX pins. Notice its not CAN_H and CAN_L. Microcontrollers do not directly connect to the CAN lines **EVER**, instead, their CAN_TX and CAN_RX are connected to a **CAN TRANCEIVER** which converts from TX/RX to CAN_H/CAN_L. CAN_TX is for sending messages, and CAN_RX is for receiving messages.
 
-<img width="254" height="187" alt="Screenshot 2025-08-25 at 10 47 23 AM" src="https://github.com/user-attachments/assets/acb5ee07-1004-4883-8b41-00bfecf7a857" />
+![alt text](../assets/3/CAN-transceiver.png)
 
 So on a PCB that uses CAN you will see: MCU --CANTX/RX---> CAN Transceiver --CANH/L---> CAN Line
 
