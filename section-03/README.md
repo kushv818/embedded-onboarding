@@ -153,9 +153,13 @@ On the STM32, the ADC works using a **Successive Approximation Register** or **S
 
 ### Nyquist-Shannon Sampling Theorem
 
-When using an ADC, it is important to know the **Nyquist-Shannon Sampling Theorem**, which states that for any continuous-time signal, you would need to sample at a rate at least 2-times higher than its highest frequency component. This would mean if the highest frequency signal you are expecting to sample is 6kHz, you will need the ADC to sample at 12kHz at the minimum.  
+When using an ADC, it is important to know the **Nyquist-Shannon Sampling Theorem**, which states that for any continuous-time signal, you would need to sample at a rate at least 2-times higher than its highest frequency component. This would mean if the highest frequency signal you are expecting to sample is 6kHz, you will need the ADC to sample at 12kHz at the minimum.
 
-If an ADC is sampling at 12kHz, the ADC will only be able to read up to 6kHz, which will be your **Nyquist Frequency**, which is represented as 1/2 your sampling rate. Any signals above the Nyquist Frequency will be read poorly and get mixed into your main signal in what is known as **Aliasing**.
+![alt text](../assets/3/nyquistfrequency.png)
+
+If an ADC is sampling at 12kHz, the ADC will only be able to read up to 6kHz, which will be your **Nyquist Frequency**, which is represented as 1/2 your sampling rate. Any signals with frequencies above the Nyquist Frequency will be reconstructed poorly and get mixed into your main signal in what is known as **Aliasing**. An example of this can be seen below.
+
+![alt text](../assets/3/aliasing.png)
 
 >You will learn more about analog and digital signal processing and how to prevent aliasing in section-05. 
 
@@ -190,18 +194,49 @@ Normally, having a peripheral accessing memory requires the CPU to handle every 
 
 ### How to Use DMA
 
-The DMA controller is set up with a data buffer for the peripheral data to be stored and later transferred. Upon completion, DMA controller will fire an interrupt to signal that the buffer is filled. You can then use the provided interrupt handler to process the recently transferred data from the peripheral however you want. 
+The DMA controller is set up with a data buffer for the peripheral data to be stored and later transferred. Upon completion, the DMA controller will fire an interrupt to signal that the buffer is filled. You can then use the provided interrupt handler to process the recently transferred data from the peripheral however you want. 
 
 On most microcontrollers including the STM32, The DMA controller will fire interrupts when the DMA buffer are both half-filled and completely filled. Knowing this, you can double the buffer size and process one half of the data while the other half fills in a process known as **Double-Buffering** or a **Ping-Pong Buffer**.
 
 ### Exercise 3: Reading Analog Voltages with the ADC using DMA
 Navigate to ```WORK.md``` in this section and begin the third exercise.
 
-## 6. Serial Communication
-TODO
+## 6. Communication Protocols
+In order for microcontrollers and other devices to exchange information and communicate with each other, the devices must agree to set of techniques and guidelines in what is known as a **Communication Protocol**. 
+
+Communication protocols can be broken down into two different types:
+
+- **Parallel**
+- **Serial**
+
+### Parallel Communication
+
+**Parallel Communication** transmits bits of data over several lines simultaneously. Although it comes with an increased cost due to the number of connections required, it has a massive advantage when it comes to the speed of data transfers. Parallel communication is commonly seen in internal buses like RAM and CPU connections, peripheral buses such as PCI connections, and display connections such as RGB-TTL. 
+
+![alt text](../assets/3/parallelconnections.png)
+
+
+### Serial Communication
+
+**Serial Communication** transmits bits of data one-by-one sequentially over a bus. In contrast to parallel communication, serial communication often requires less wires and tend to maintain better signal integrity over longer distances than parallel communication. Common examples of serial communication are in peripheral buses such as PCIe, USB, SATA. Common serial protocols include UART, I2C, SPI, CAN, RS-232, and Ethernet.
+
+In order for serial communication to work effectively, each device must agree on a data rate. This can be done in two different ways:
+
+ - **Asynchronous**
+ - **Synchronous** 
+
+In **Asynchronous** communication, the devices maintain their own clocks, but use a mutually agreed-upon data rate to send and receive bits independently.
+
+In **Synchronous** communication, a clock signal is shared between the devices.
+
+![alt text](../assets/3/serialconnections.png)
+
+For the remainder of section-03, we will be discussing four commonly used communication protocols you will be using during your time in Dallas Formula Racing.
+
 
 ## 7. Universal Asynchronous Receiver/Transmitter (UART)
-TODO
+
+**Universal Asynchronous Receiver/Transmitter** or **UART** is an example of asynchronous serial communication. where the two devices do not share a clock signal, but agree on a specified data rate for communication. 
 
 ## 8. Serial Peripheral Interface (SPI)
 TODO
