@@ -20,6 +20,26 @@ Before you start, set up your environment if you haven't done so already. Go to 
 4. Take this easy exercise as an opprtunity to fix your toolchain, compiler settings, IDE settings and more.
 5. Bonus: Swap to integers using pointers.
 
+## Exercise 1.1: Improving code
+
+Recall the matrix example from the reading.
+
+```C
+matrix_t matrix_transpose(matrix_t m) {
+    matrix_t mt = create_matrix(m.cols, m.rows); //<- assume this has been implemented
+
+    for (int i = 0; i < m.rows; ++i) {
+        for (int j = 0; j < m.cols; ++j) {
+            mt.data[j * m.rows + i] = m.data[i * m.cols + j];
+        }
+    }
+
+    return mt;
+}
+```
+
+How would you improve this code?
+
 ## Exercise 2: FizzBuzz
 
 1. Inside the file you used for exercise 1, make a function with signature ` FizzBuzz`
@@ -41,7 +61,8 @@ Before you start, set up your environment if you haven't done so already. Go to 
 1. Do this in the same C file as (1) and (2).
 2. `qsort` is a C standard library function that implements a sorting algorithm for arrays of arbitrary objects according to a user-provided comparison function.
    - Write the user-provided three-way comparison function for `int` data type.
-3. Call `qsort` on the dynamiclaly alloacted buffer from exercise 2.
+   - A three-way comparison takes two values `A` and `B` belonging to a type with a total order and determines whether `A < B`, `A = B`, or `A > B` in a single operation.
+3. Call `qsort` on the dynamically allocated buffer from exercise 2 to sort it in descending order (20, 19, ... 1).
 
 ## Exercise 4: Blinky
 
@@ -125,6 +146,8 @@ brew install stlink             # macOS
 
 Implementation, design, and details are all up to you. Get creative!
 
+If you aren't sure, I recommend the circular buffer library as a starting point. If that sounds boring to you, try something else.
+
 #### Look at `projects` folder for more info on each idea.
 
 ### Instructions and requirements that apply to all projects:
@@ -161,6 +184,9 @@ Implementation, design, and details are all up to you. Get creative!
 - You must have a minimum of 7 **well-named, significant** commits. If you think your project can be finished under 7 commits, it is not hard enough.
 
   - Pull requests for merging features on branches is not required.
+  - Commit naming convention as outlined [here](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+  - Pull request naming convention as outlined [here](https://github.com/mozilla-mobile/firefox-ios/wiki/Pull-Request-Naming-Guide)
+    - PRs are optional, but follow this naming convention outside of this tutorial, too.
 
 - Create a `README.md` that aptly describes what your project does. Your `README.md` must also contain **all** of the following:
 

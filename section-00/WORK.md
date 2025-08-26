@@ -2,6 +2,16 @@
 
 Estimated completion time: 1 hour.
 
+## 0. Before you start:
+
+While not required, we recommend you buy your own microcontroller to test out certain parts of the onboarding as you go along.
+
+Many of the tutorials are written around this microcontroller: the `STM32F030R8` chip on the `NUCLEO-F030R8` board package. They're about $11.
+
+You can buy one here: [Buy NUCLEO-F030R8 at Digikey](https://www.digikey.com/en/products/detail/stmicroelectronics/NUCLEO-F030R8/4695526).
+
+As an engineering student, it's good to have one on hand anyways.
+
 ## 1. Make a GitHub account if you don't have one.
 
 Use whatever email you prefer. If you lose access to the account and email, your work will be very hard to recover.
@@ -26,7 +36,7 @@ Git will sometimes need credentials from the user in order to perform operations
 
 ## 6. Clone the repository to your local.
 
-Make sure its the right one; not the template.
+Make sure its the right one; not the template. Open this in the website or in VSCode. On VSCode, you can press CTRL+SHIFT+V or CMD+SHIFT+V to enter Markdown preview mode.
 
 ## 7. Submit for Section 00
 
@@ -43,11 +53,11 @@ Run `git remote -v` in the directory. You should get links to repositories that 
 2\. Inside that file `submit.md` answer the following questions:
 
 - Run a command line terminal that does both of the following:
-  - lists **all** files in that directory **and**
+  - lists **all** files in the parent directory (`..`) **and**
   - only prints files that match the expression `\.git`.
 - What command did you run?
 
-- After running that command, you should see 3 files. What 3 files do you see?
+- After running that command, you should see 3 (or 4) files. What files do you see?
 
 3\. Use the Git command-line tools to
 
