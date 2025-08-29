@@ -54,7 +54,7 @@ MacOS: `brew install --cask gcc-arm-embedded  `
 
 Linux: `sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi`
 
-### **Make** - Automates the build process using a Makefile. Make is not used directly, but is a dependency for CMake.
+### **Make** - Automates the build process using a Makefile. 
 
 Windows: `pacman  -S mingw-w64-x86_64-make  `
 
