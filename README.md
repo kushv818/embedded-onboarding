@@ -50,17 +50,27 @@ You can also see the Windows setup [guide](SETUP.md) I wrote when we migrated fr
 ## Table of Contents
 
 | Section | Title                          | Difficulty | Learning Outcomes                                                                                                                                                                                                                      |
-| ------- | ------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | 
+| ------- | ------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 00      | Introduction & Version Control | -          | Basic grasp of embedded programming and an full understanding of git.                                                                                                                                                                  |
 | 01      | The C Language                 | +          | Fundamental C programming concepts: control structures, pointers, structs, memory, basic data structures, volatile and weak.                                                                                                           |
 | 02      | Computer Architecture          | +++        | Understanding of registers, compiler process, linking, RAM, stack and heap memory, working knowledge of ARMv8 assembly.                                                                                                                |
 | 03      | Peripherals and Protocols      | ++         | Interfacing with external modules. Know and understand CAN, I2C, SPI, GPIO. Know how to utilize DMA. Using the STM32 HAL to interface with peripherals.                                                                                |
-| 04      | Operating Systems              | +++        | Understanding of inner workings of operating systems, RTOS. Know how and what a scheduler does and works. Know how processes and threads work with each other. Understand parallelism and concurrency. Understand interrupts.          | 
+| 04      | Operating Systems              | +++        | Understanding of inner workings of operating systems, RTOS. Know how and what a scheduler does and works. Know how processes and threads work with each other. Understand parallelism and concurrency. Understand interrupts.          |
 | 05      | Hardware and Signal Processing | ++++       | Analog and digital signals and converting between the two. Basics of EMI mitigation. Signal processing and filtering basics. Introduction to filtering. CMSIS libraries. Debugging with JTAG and OpenOCD. Creating the IOC and pinout. |
 | 06      | Final Project                  | +++        | Create a rudimentary data acquisition system; no hardware design required. Send information with print over UART.                                                                                                                      |
 
+#### _Consider giving this repository a ☆ if you found it helpful!_
+
 ## References
 
-## Acknowledgements
+\*not in any particular order
 
-#### _Consider giving this repository a ☆ if you found it helpful!_
+[OpenSTM32](https://www.openstm32.org/HomePage)
+[CMake]()
+[Makefile]()
+[]()
+[]()
+[]()
+[]()
+
+## Acknowledgements

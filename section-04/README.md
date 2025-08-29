@@ -44,7 +44,7 @@ Generally, the kernel is the second thing loaded into your computer (following t
 
 Read this: https://cpu.land/
 
-## Types
+## Quick Overview
 
 ### General Purpose Operating System
 
@@ -58,7 +58,7 @@ Read this: https://cpu.land/
 - Prioritizes determinism (tasks must run within specific timing guarantees).
 - Used in: automotive ECUs, robotics, aerospace, IoT devices.
 
-## RTOS Key Features
+## Key Features
 
 - Scheduler: Divides CPU time into slices and determines which task runs
 - Priority-absed execution: highest-priority task runs first at each tick
@@ -100,3 +100,9 @@ Scheduling Issues
 - Starvation: some tasks never get CPU time due to poor handling of delays with higher-priority tasks, meaning the lower-priority task never gets a chance to run. Solved with "aging" - periodically raising priority of starving tasks.
 - Deadlock: starvation on a system-wide scale, where no tasks are able to run because for example, one task may be waiting for a mutex to be released from a task, while that task is waiting for a mutex to be released from another, and so on.
   Time outs can help deadlock, where you halt all the tasks and try again later.
+
+## Further Reading (links)
+
+[RTOS Fundamentals](https://freertos.org/Documentation/01-FreeRTOS-quick-start/01-Beginners-guide/01-RTOS-fundamentals)
+
+[Why use an RTOS? Why not just use `while(1)`?](https://freertos.org/Why-FreeRTOS/FAQs/What-is-this-all-about#why-use-an-rtos)
