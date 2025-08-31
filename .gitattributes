@@ -1,2 +1,4 @@
 *.md linguist-language=Markdown
 *.o linguist-language=C
+*.i linguist-language=C
+*.s linguist-language=Assembly
