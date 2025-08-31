@@ -1089,7 +1089,7 @@ Zero-initialize buffers to avoid undefined behavior.
 
 ### Header files and code organization
 
-Keep header files free of definitions—only put declarations, macros, and typedefs.
+Keep header files free of definitions and only put declarations, macros, and typedefs.
 
 Use include guards or #pragma once to prevent multiple inclusion.
 
