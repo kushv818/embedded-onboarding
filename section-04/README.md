@@ -56,7 +56,7 @@ The scheduler is a key feature of any operating system. It divides CPU time into
 
 These three concepts are fundamental to understanding how operating systems manage work:
 
-- **Task:** In embedded and RTOS contexts, a "task" is a unit of work scheduled by the OS—similar to a lightweight thread. For example, reading sensor data or handling communication can each be a separate task.
+- **Task:** In embedded and RTOS contexts, a "task" is a unit of work scheduled by the OS, similar to a lightweight thread. For example, reading sensor data or handling communication can each be a separate task.
 
 - **Thread:** A thread is the smallest sequence of programmed instructions that can be managed independently by the scheduler. Threads within the same process share memory and resources but have their own program counter and stack.
 
@@ -85,4 +85,3 @@ Priority inversion happens when a low-priority task holds a mutex, and a high-pr
 ## 8. Further Reading
 
 - [RTOS Fundamentals](https://freertos.org/Documentation/01-FreeRTOS-quick-start/01-Beginners-guide/01-RTOS-fundamentals)
-- [Why use an RTOS? Why not just use `while(1)`?](https://freertos.org/Why-FreeRTOS/FAQs/What-is-this-all-about#why-use-an-rtos)
