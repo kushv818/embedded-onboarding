@@ -91,7 +91,7 @@ There are two types of interrupts we will be looking at:
 
 ### How do Interrupts Work?
 
-While the main program is running, an **IRQ** or **Interrupt Request** signal will be sent either internally or externally to alert the CPU. The processor will then pause the main program and save its current state before **handling** the interrupt by jumping to and executing an **ISR** or **Interrupt Service Routine**, which is a function designed to run upon an IRQ. After the ISR has completed, the program will resume the main program from its previous saved state.
+While the main program is running, an **IRQ** or **Interrupt Request** signal will be sent either internally or externally to alert the CPU. Upon receiving an IRQ, the processor will finish executing its current instruction, then pause the main program and save its current state. The processor will **handle** the interrupt by jumping to and executing an **ISR** or **Interrupt Service Routine**, which is a function designed to run upon an IRQ. After the ISR has completed, the program will resume the main program from its previous saved state.
 
 ### Polling Vs Interrupts
 
@@ -185,9 +185,10 @@ $$
 
 
 ## 5. Direct Memory Access (DMA)
-Normally, having a peripheral accessing memory requires the CPU to handle every single transaction. With high speed data streams such as ADCs sampling thousands, maybe even millions of times per second, these operations can quickly bog down the CPU. Luckily, there exists a solution to offload these data transfer operations so that the CPU can focus on other tasks.
+Normally, having a peripheral accessing memory requires the CPU to handle every single transaction. With high speed data streams such as ADCs sampling thousands, maybe even millions of times per second, these operations can quickly bog down the CPU. Luckily, there exists a solution to offload these data transfer operations so that the CPU can focus on other tasks. 
 
-**Direct Memory Access**, or **DMA** is a feature that allows a peripheral to interface directly with memory with minimal intervention from the CPU. A DMA controller is used to automatically move data from the peripheral to memory while the CPU is free to do other tasks in the background. 
+**Direct Memory Access**, or **DMA** is a feature that allows a peripheral to interface directly with memory with minimal intervention from the CPU. A DMA controller is used to automatically move data from the peripheral to memory while the CPU is free to do other tasks in the background. DMA is especially useful for moving large streams of data to memory in an efficient manner.
+
 
 > External DMA cards have become a popular method used for undetected cheating in video games. DMA allows a player to read the memory of the system directly, bypassing all checks from the CPU and anti-cheat software.
 
@@ -211,14 +212,14 @@ Communication protocols can be broken down into two different types:
 
 ### Parallel Communication
 
-**Parallel Communication** transmits bits of data over several lines simultaneously. Although it comes with an increased cost due to the number of connections required, it has a massive advantage when it comes to the speed of data transfers. Parallel communication is commonly seen in internal buses like RAM and CPU connections, peripheral buses such as PCI connections, and display connections such as RGB-TTL. 
+**Parallel Communication** transmits bits of data over several lines simultaneously. Although it comes with an increased cost due to the number of connections required, it has a massive advantage when it comes to simplicity and speed of data transfers over short distances. Parallel communication is commonly seen in internal buses like RAM and CPU connections, peripheral buses such as PCI connections, and display connections such as RGB-TTL. 
 
 ![alt text](../assets/3/parallelconnections.png)
 
 
 ### Serial Communication
 
-**Serial Communication** transmits bits of data one-by-one sequentially over a bus. In contrast to parallel communication, serial communication often requires less wires and tend to maintain better signal integrity over longer distances than parallel communication. Common examples of serial communication are in peripheral buses such as PCIe, USB, SATA. Common serial protocols include UART, I2C, SPI, CAN, RS-232, and Ethernet.
+**Serial Communication** transmits bits of data one-by-one sequentially over a bus. In contrast to parallel communication, serial communication often requires less wires and tend to maintain better signal integrity over longer distances than parallel communication. Modern advancements in technology have made serial communication faster, making it a highly preferred choice of communication. Common examples of serial communication are in peripheral buses such as PCIe, USB, SATA. Common serial protocols include UART, I2C, SPI, CAN, RS-232, and Ethernet.
 
 In order for serial communication to work effectively, each device must agree on a data rate. This can be done in two different ways:
 
@@ -236,7 +237,23 @@ For the remainder of section-03, we will be discussing four commonly used commun
 
 ## 7. Universal Asynchronous Receiver/Transmitter (UART)
 
-**Universal Asynchronous Receiver/Transmitter** or **UART** is an example of asynchronous serial communication. where the two devices do not share a clock signal, but agree on a specified data rate for communication. 
+**Universal Asynchronous Receiver/Transmitter** or **UART** is an example of asynchronous serial communication. where the two devices do not share a clock signal, but agree on a specified data rate for communication. It is widely adopted because it is an extremely simple protocol to implement and understand. Despite its simplicity, data frame size is limited and usually only carrying 8-bits in a frame, and long distance communication is not viable. 
+
+UART requires two wires to commmunicate with each other:
+- TX (Transmitter)
+- RX (Receiver)
+
+The TX goes into the other device's RX and vice versa. Both devices must also share a common ground.
+
+![alt text](../assets/3/uart_wiring.png)
+
+### Data Frame
+
+Since UART is asynchronous, both devices need to agree on a certain **baud rate**, or number of bits sent per second. Common baud rates you will see in UART are 9600, 19200, 38400, 57600, 115200, 230400, 460800, and 921600.
+
+In UART, the message will be sent from TX to RX. A UART frame starts and stays in HIGH to indicate an **idle** state. To begin the transmission, the data line will be pulled LOW, indicating the **start bit**. After the start bit, 8 bits will be sent with the LSB first, and MSB last. Sometimes you may even encounter a **parity bit** in order to check to see if the data transmission is coherent. To end the transmission, the data line gets pulled back up to HIGH to indicate the end of the transmission. 
+
+![alt text](../assets/3/uart_frame.png)
 
 ## 8. Serial Peripheral Interface (SPI)
 TODO

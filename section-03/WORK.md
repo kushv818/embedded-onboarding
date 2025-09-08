@@ -17,3 +17,8 @@ In this exercise, you will learn how to use interrupts to turn on the LED using 
 To set up an interrupt pin, open up your ```.ioc``` file in STM32CubeMX. You will need to configure the GPIO mode on the pin corresponding to your button in ```External Interrupt Mode with Falling Edge Trigger Detection``` 
 
 You will need to use the ```HAL_GPIO_EXTI_Callback``` function, preferrably after the ```/* USER CODE BEGIN 4 */``` section.
+
+## Exercise 3: Reading Analog Voltages with the ADC using DMA
+
+In this exercise, you will use the ADC, timers, and DMA peripherals to read voltages from an external source such as a wavegen, DC power supply, or another microcontroller. 
+
