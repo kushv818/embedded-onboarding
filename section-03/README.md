@@ -247,20 +247,55 @@ The TX goes into the other device's RX and vice versa. Both devices must also sh
 
 ![alt text](../assets/3/uart_wiring.png)
 
-### Data Frame
+### UART Data Frame
 
-Since UART is asynchronous, both devices need to agree on a certain **baud rate**, or number of bits sent per second. Common baud rates you will see in UART are 9600, 19200, 38400, 57600, 115200, 230400, 460800, and 921600.
+Since UART is asynchronous, both devices need to agree on a certain **Baud Rate**, or number of bits sent per second. Common baud rates you will see in UART are **9600, 19200, 38400, 57600, 115200, 230400, 460800, and 921600**.
 
-In UART, the message will be sent from TX to RX. A UART frame starts and stays in HIGH to indicate an **idle** state. To begin the transmission, the data line will be pulled LOW, indicating the **start bit**. After the start bit, 8 bits will be sent with the LSB first, and MSB last. Sometimes you may even encounter a **parity bit** in order to check to see if the data transmission is coherent. To end the transmission, the data line gets pulled back up to HIGH to indicate the end of the transmission. 
+In UART, the message will be sent from TX to RX. A UART frame starts and stays in HIGH to indicate an **Idle** state. To begin the transmission, the data line will be pulled LOW, indicating the **Start Bit**. After the start bit, 8 bits will be sent with the LSB first, and MSB last. Sometimes you may even encounter a **Parity Bit** in order to check to see if the data transmission is coherent. To end the transmission, the data line gets pulled back up to HIGH to indicate the end of the transmission. 
 
 ![alt text](../assets/3/uart_frame.png)
 
 ## 8. Serial Peripheral Interface (SPI)
-TODO
+**Serial Peripheral Interface**, or **SPI** is another common way of communication between devices and protocols. It offers a drastic advantage when it comes to data transmission rates, sometimes up to 10 MHz or higher as it is synchronized by a clock, and does not need extra overhead of checking for parity or start/stop bits. SPI typically operates in a **Full-Duplex** mode, which means that data is both simutaneously sent and received.
+
+SPI communicates between a **Master** and one or more **Slave** devices. SPI also allows for multiple devices to be connected in a daisy-chain fashion to communicate with each other. 
+
+![alt text](../assets/3/spi_muli_slave.png)
+
+SPI requires 4 wires to communicate:
+- CS (Chip Select)
+- MISO (Master-In Slave-Out)
+- MOSI (Master-Out Slave-In)
+- CLK (Clock)
+
+> Since SPI is not standardized, you will often see terms being changed. Sometimes you will see MOSI and MISO being named SDI and SDO, but the function of the pins remain the same.
+
+When working with SPI, it is important to know that SPI has different **Modes** designated by **CPOL**, or **Clock-Polarity** and **CPHA**, or **Clock Phase**. CPOL indicates whether the clock will idle on a LOW or HIGH clock, and CPHA indicates whether the data is sampled on the rising or falling edge of a clock. 
+
+The SPI modes are listed below: 
+- MODE 0
+    - CPOL: 0 (Idles LOW)
+    - CPHA: 0 (Data sampled on the rising edge)
+- MODE 1
+    - CPOL: 0 (Idles LOW)
+    - CPHA: 1 (Data sampled on the falling edge)
+- MODE 2
+    - CPOL: 1 (Idles HIGH)
+    - CPHA: 0 (Data sampled on the falling edge)
+- MODE 3
+    - CPOL: 1 (Idles HIGH) 
+    - CPHA: 1 (Data sampled on the rising edge)
+
+### SPI Data Frame
+
+To start an SPI transmission, the master device will pull the CS line LOW for the slave device it wants to communicate with. The master will generate the CLK pulses to synchronize the slave. The master device will then send 1 byte of data over the MOSI line to the slave, which the slave will then send 1 byte back over the MISO line.
+
+Below is an example of a clock diagram for SPI MODE 0.
+
+![alt text](../assets/3/spi_mode0.png)
 
 ## 9. Inter-Integrated Circuit (I2C)
 TODO
 
 ## 10. Controller Area Network (CAN)
 TODO
-
