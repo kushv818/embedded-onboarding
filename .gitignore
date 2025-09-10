@@ -55,3 +55,9 @@ Mkfile.old
 dkms.conf
 
 .vscode/
+
+# Customs
+
+section-02/s-exercises/exercise4/vault.c
+section-02/s-exercises/exercise4/Makefile
+!section-02/s-exercises/exercise4/vault.elf

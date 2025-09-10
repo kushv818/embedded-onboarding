@@ -24,6 +24,13 @@ Once you feel like you have a good grasp on syntax, program structure, and progr
 
 **Goal:** Teach the core features of C relevant to embedded development without assuming prior C experience.
 
+## You should already know...
+
+- General purpose programming language syntax
+- How to use git
+- How to use VS Code
+- How to count to 10
+
 ---
 
 ## 0. Binary, bitwise and logic.
@@ -482,11 +489,10 @@ typedef struct {
 ```C
 matrix_t matrix_transpose(matrix_t m) {
     matrix_t mt = create_matrix(m.cols, m.rows); //<- assume this has been implemented
-    if (!t.data) return t;
 
     for (int i = 0; i < m.rows; ++i) {
         for (int j = 0; j < m.cols; ++j) {
-            t.data[j * m.rows + i] = m.data[i * m.cols + j];
+            mt.data[j * m.rows + i] = m.data[i * m.cols + j];
         }
     }
 
@@ -603,7 +609,22 @@ C programs typically operate with 4 distinct memory regions.
 
 ### Memory in software
 
+With the perks of C, we can manipulate memory through software.
+
 ### Heap memory
+
+In embedded C, the **heap** is the RAM area used for dynamic allocation (`malloc`, `calloc`, `realloc`). It usually sits between the static data segment and the stack. It grows upward, while the stack grows downward. If they collide, the system crashes.
+
+Unlike stack variables, heap allocations persist until you `free()` them, which makes them slower, less predictable, and prone to fragmentation over long runtimes. Because embedded systems value predictability and stability, heap use is often minimized or avoided in favor of static or stack allocation.
+
+> [!NOTICE]  
+> There are many embedded C coding style standards that _prohibit_ the use of the heap. On DFR, we will NOT use the heap memory. We will allocate all memory at compile time.
+
+Watch these videos and take notes:
+
+[Why is the heap so slow?](https://youtu.be/ioJkA7Mw2-U?si=UwgI6zQFzPDU4FOT)
+
+[Why is the stack so fast?](https://youtu.be/N3o5yHYLviQ?si=aX_xVDUACLnrXvqu)
 
 ### Stack memory
 
@@ -618,7 +639,7 @@ We can manage memory hardware using the C language via the following functions:
 
 ### Memory in hardware
 
-On the hardware side, there are two types of memory: **S**tatic RAM and **Dynamic** RAM.
+On the hardware side, there are two types of memory: **S**tatic RAM and **D**ynamic RAM.
 
 A brief overview on the differences:
 
@@ -732,7 +753,7 @@ This zoom in focuses on an area of interest:
 
   - If you know how to count in base-16 (aka Hex), you know that `0x000F FFFF` is equivalent to `1048576` bits (divided by `8`) = `131072` bytes (divided by `1024`) = exactly `128` KB.
 
-- Anoter region of note in the zoom-in is the RAM, starting at address `0x2000 0000`. This is where dynamic memory is allocated.
+- Another region of note in the zoom-in is the RAM, starting at address `0x2000 0000`. This is where dynamic memory is allocated.
 
 #### Memory architecture will be discussed in more detail in later sections.
 
@@ -889,6 +910,32 @@ DMA is not the only application for the `volatile` keyword! Some memory values m
 
 If the `volatile` keyword is not used, the compiler might re-use cached values or values within the hardware registers (which the compiler does automatically via compiler optimizations). Read more on compiler optimizations [here](https://en.wikipedia.org/wiki/Optimizing_compiler).
 
+Let's say we don't use `volatile` in this example:
+
+```C
+#define GPIOA_ODR   (*(uint32_t*)0x48000014) // NO volatile!
+
+int main(void) {
+    while (1) {
+        GPIOA_ODR |=  (1 << 5); // set PA5 high
+        GPIOA_ODR &= ~(1 << 5); // set PA5 low
+    }
+}
+```
+
+The compiler sees that `GPIOA_ODR` is just a normal pointer dereference and assumes nothing else can change it except this code.
+
+It notices that you write a value.
+
+Immediately after, you overwrite it again without ever using the old value for anything else. **Neither write result is read back or used in the program.**
+
+The optimizer decides: “The first write is pointless and the second one overwrites it immediately. I’ll just remove it.”
+
+So you must explicitly tell the compile to not optimize around these things.
+
+> [!NOTICE]  
+> You may be thinking to yourself: "Wait, this doesn't look like the C I've been looking at so far," but it is still C. We are just performing at bitwise operation on a memory-mapped hardware register. You'll see more later in section 2.
+
 ### `const`, `static`, and `extern`
 
 The constant modifier does the same thing in C as with other languages (`final` in Java). It tells the compiler that the relevant variable will never change during runtime, and therefore prevents write operations on that variable.
@@ -1042,7 +1089,7 @@ Zero-initialize buffers to avoid undefined behavior.
 
 ### Header files and code organization
 
-Keep header files free of definitions—only put declarations, macros, and typedefs.
+Keep header files free of definitions and only put declarations, macros, and typedefs.
 
 Use include guards or #pragma once to prevent multiple inclusion.
 
@@ -1082,6 +1129,8 @@ Use #define only for compile-time constants, preprocessor flags, or conditional 
 ### The big idea
 
 Before your written `.c` file is turned into something that actually runs on the CPU, it must be preprocessed, compiled, the assembled, then linked, then loaded. Only then can it be ran.
+
+Here we will use the GNU C Compiler, part of the GNU Compiler Collection aka GCC.
 
 #### The preprocessor will:
 
