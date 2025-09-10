@@ -28,7 +28,7 @@ There are mamy ways to do this. As long as it makes it to your `usr/bin` or can 
 
 Make sure this directory is safe, accessible, and ideally, built into your computer (not an external device).
 
-You will clone the forked repository into this repository in this next step so make sure you're okay with having the repository here.
+You will clone the forked repository into this directory in this next step so make sure you're okay with having the repository here.
 
 ## 5. Set up your local git creditials.
 
