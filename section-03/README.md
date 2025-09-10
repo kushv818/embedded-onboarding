@@ -98,7 +98,7 @@ There are two types of interrupts we will be looking at:
 
 ### How do Interrupts Work?
 
-While the main program is running, an **IRQ** or **Interrupt Request** signal will be sent either internally or externally to alert the CPU. The processor will then pause the main program and save its current state before **handling** the interrupt by jumping to and executing an **ISR** or **Interrupt Service Routine**, which is a function designed to run upon an IRQ. After the ISR has completed, the program will resume the main program from its previous saved state.
+While the main program is running, an **IRQ** or **Interrupt Request** signal will be sent either internally or externally to alert the CPU. Upon receiving an IRQ, the processor will finish executing its current instruction, then pause the main program and save its current state. The processor will **handle** the interrupt by jumping to and executing an **ISR** or **Interrupt Service Routine**, which is a function designed to run upon an IRQ. After the ISR has completed, the program will resume the main program from its previous saved state.
 
 ### Polling Vs Interrupts
 
@@ -192,9 +192,10 @@ $$
 
 
 ## 5. Direct Memory Access (DMA)
-Normally, having a peripheral accessing memory requires the CPU to handle every single transaction. With high speed data streams such as ADCs sampling thousands, maybe even millions of times per second, these operations can quickly bog down the CPU. Luckily, there exists a solution to offload these data transfer operations so that the CPU can focus on other tasks.
+Normally, having a peripheral accessing memory requires the CPU to handle every single transaction. With high speed data streams such as ADCs sampling thousands, maybe even millions of times per second, these operations can quickly bog down the CPU. Luckily, there exists a solution to offload these data transfer operations so that the CPU can focus on other tasks. 
 
-**Direct Memory Access**, or **DMA** is a feature that allows a peripheral to interface directly with memory with minimal intervention from the CPU. A DMA controller is used to automatically move data from the peripheral to memory while the CPU is free to do other tasks in the background. 
+**Direct Memory Access**, or **DMA** is a feature that allows a peripheral to interface directly with memory with minimal intervention from the CPU. A DMA controller is used to automatically move data from the peripheral to memory while the CPU is free to do other tasks in the background. DMA is especially useful for moving large streams of data to memory in an efficient manner.
+
 
 > External DMA cards have become a popular method used for undetected cheating in video games. DMA allows a player to read the memory of the system directly, bypassing all checks from the CPU and anti-cheat software.
 
@@ -218,14 +219,14 @@ Communication protocols can be broken down into two different types:
 
 ### Parallel Communication
 
-**Parallel Communication** transmits bits of data over several lines simultaneously. Although it comes with an increased cost due to the number of connections required, it has a massive advantage when it comes to the speed of data transfers. Parallel communication is commonly seen in internal buses like RAM and CPU connections, peripheral buses such as PCI connections, and display connections such as RGB-TTL. 
+**Parallel Communication** transmits bits of data over several lines simultaneously. Although it comes with an increased cost due to the number of connections required, it has a massive advantage when it comes to simplicity and speed of data transfers over short distances. Parallel communication is commonly seen in internal buses like RAM and CPU connections, peripheral buses such as PCI connections, and display connections such as RGB-TTL. 
 
 ![alt text](../assets/3/parallelconnections.png)
 
 
 ### Serial Communication
 
-**Serial Communication** transmits bits of data one-by-one sequentially over a bus. In contrast to parallel communication, serial communication often requires less wires and tend to maintain better signal integrity over longer distances than parallel communication. Common examples of serial communication are in peripheral buses such as PCIe, USB, SATA. Common serial protocols include UART, I2C, SPI, CAN, RS-232, and Ethernet.
+**Serial Communication** transmits bits of data one-by-one sequentially over a bus. In contrast to parallel communication, serial communication often requires less wires and some, not all protocols tend to maintain better signal integrity over longer distances than parallel communication. Modern advancements in technology have made serial communication faster, making it a highly preferred choice of communication. Common examples of serial communication are in peripheral buses such as PCIe, USB, SATA. Common serial protocols include UART, I2C, SPI, CAN, RS-232, and Ethernet.
 
 In order for serial communication to work effectively, each device must agree on a data rate. This can be done in two different ways:
 
@@ -243,13 +244,120 @@ For the remainder of section-03, we will be discussing four commonly used commun
 
 ## 7. Universal Asynchronous Receiver/Transmitter (UART)
 
-**Universal Asynchronous Receiver/Transmitter** or **UART** is an example of asynchronous serial communication. where the two devices do not share a clock signal, but agree on a specified data rate for communication. 
+**Universal Asynchronous Receiver/Transmitter** or **UART** is an example of asynchronous serial communication. where the two devices do not share a clock signal, but agree on a specified data rate for communication. It is widely adopted because it is an extremely simple protocol to implement and understand, and you will often see it as the method for logging data over a serial port. Despite its simplicity, data frame size is limited and usually only carrying 8-bits in a frame, and long distance communication is not viable. 
+
+UART requires two wires to commmunicate with each other:
+- **TX** (Transmitter)
+- **RX** (Receiver)
+
+The TX goes into the other device's RX and vice versa. Both devices must also share a common ground.
+
+![alt text](../assets/3/uart_wiring.png)
+
+### UART Data Frame
+
+Since UART is asynchronous, both devices need to agree on a certain **Baud Rate**, or number of bits sent per second. Common baud rates you will see in UART are **9600, 19200, 38400, 57600, 115200, 230400, 460800, and 921600**.
+
+Process of a UART Transmission:
+
+1. In UART, the message will be sent from TX to RX. 
+
+2. A UART frame starts and stays in HIGH to indicate an **Idle** state. 
+
+3. To begin the transmission, the data line will be pulled LOW, indicating the **Start Bit**. 
+
+4. After the start bit, 8 bits will be sent with the LSB first, and MSB last. Sometimes you may even encounter a **Parity Bit** in order to check to see if the data transmission is coherent. 
+
+5. To end the transmission, the data line gets pulled back up to HIGH to indicate the end of the transmission. 
+
+![alt text](../assets/3/uart_frame.png)
 
 ## 8. Serial Peripheral Interface (SPI)
-TODO
+**Serial Peripheral Interface**, or **SPI** is another common way of communication between devices and protocols. It offers a drastic advantage when it comes to data transmission rates, sometimes up to 10 MHz or higher as it is synchronized by a clock, and does not need extra overhead of checking for parity or start/stop bits. The downsides to using SPI is that it is not a viable form of long distance communication, and you would need to accomodate pins in order to support more devices.
+
+SPI communicates between a **Master** and one or more **Slave** devices. Essentially, the master device will send a command to a slave device, which the slave will them respond with sending data back to the master. SPI typically operates in a **Full-Duplex** mode, which means that data is both simutaneously sent and received between devices using multiple data lines. SPI also allows for multiple devices to be connected in a daisy-chain fashion to communicate with each other. Every slave device requires its own **Chip Select**, or **CS** line connected to the master device, which is important to consider when using SPI.
+
+![alt text](../assets/3/spi_muli_slave.png)
+
+Altogether, SPI requires 4 wires to communicate:
+- **CS** (Chip Select)
+- **MISO** (Master-In Slave-Out)
+- **MOSI** (Master-Out Slave-In)
+- **CLK** (Clock)
+
+> Since SPI is not standardized, you will often see terms being changed. Sometimes you will see MOSI and MISO being named SDI and SDO, but the function of the pins remain the same.
+
+When working with SPI, it is important to know that SPI has different **Modes** designated by **CPOL**, or **Clock-Polarity** and **CPHA**, or **Clock Phase**. CPOL indicates whether the clock will idle on a LOW or HIGH clock, and CPHA indicates whether the data is sampled on the rising or falling edge of a clock. 
+
+The SPI modes are listed below: 
+- **MODE 0**: Idles LOW, Data sampled on the rising edge
+    - CPOL: 0
+    - CPHA: 0
+- **MODE 1**: Idles LOW, Data sampled on the falling edge
+    - CPOL: 0
+    - CPHA: 1
+- **MODE 2**: Idles HIGH, Data sampled on the falling edge
+    - CPOL: 1
+    - CPHA: 0
+- **MODE 3**: Idles HIGH, Data sampled on the rising edge
+    - CPOL: 1
+    - CPHA: 1
+
+### SPI Data Frame
+The process of an SPI transmission:
+
+1. To start an SPI transmission, the master device will pull the CS line LOW for the slave device it wants to communicate with. 
+
+2. The master will generate the CLK pulses to synchronize the slave. 
+
+3. The master device will then send 1 byte of data over the MOSI line to the slave.
+
+4. The slave device will then send 1 byte back over the MISO line.
+
+Below is an example of a clock diagram for SPI MODE 0.
+
+![alt text](../assets/3/spi_mode0.png)
 
 ## 9. Inter-Integrated Circuit (I2C)
-TODO
+**Inter-Integrated Circuit**, or **I2C** is another form of synchronous serial communication. I2C is primarily used for short-distance communication, originally purposed for communicating between integrated circuits on a PCB. I2C is very common with microcontroller peripherals due to it only requiring 2 wires and allows for devices to be daisy-chained. However, it is significantly slower than SPI, often capping out at 400kHz, and needs resistors to pull up the data line in order for it to function. 
+
+Like SPI, I2C uses a Master-Slave device configuration. I2C also supports daisy-chaining, with the benefit of not needing extra wires and pins for slave selection. However, I2C differs from SPI in that it operates in a **Half-Duplex** mode, which means that the master and slave data is sequentially sent over one data line, and only one device can communicate at a time.
+
+I2C requires 2 wires:
+- **SCL** (Serial Clock)
+- **SDA** (Serial Data)
+
+The **SCL** line provides the clock signal to synchronize the devices, and the **SDA** line is used to transfer data across devices.
+
+![alt text](../assets/3/i2c_wiring.png)
+
+The necessity of the resistors **Rp** will be explained next.
+
+### Open Drain Design
+
+I2C is designed in a fashion that the master device can only pull the clock and data lines LOW. In what is known as an **Open-Drain** output, an nMOS transistor is connected in a way that will short the line to LOW when voltage is applied to the gate. However, there is no way to pull the line back up to HIGH when the gate voltage is LOW. In order to pull the line back up, **Pull-Up Resistors** connect the line to HIGH. The resistance values for the pull-up resistors are often 10 kΩ, 4.7 kΩ, or 2.2 kΩ depending on the speed and capacitance of the bus. 
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/4/47/Animated_open_drain_output.gif" alt="Alt Text" width="300" height="300">
+
+### I2C Data Frame
+
+The process of an I2C transmission:
+
+1. For the **Start Condition**, the master will begin the communication by setting SDA to LOW when the SCL is HIGH in order to wake up the slave devices. 
+
+2. A 7-bit **Address** is then sent over SDA in order to identify the slave device that will be communicating the master device. 
+
+3. A singular **Read/Write Bit** is sent over SDA signifying a
+    - 0: Write Operation
+    - 1: Read Operation
+
+4. Data is sent over SDA 1 byte at a time. 
+
+5. In between bytes, an **ACK** or **Acknowledge** bit is sent over SDA for both devices to confirm that the data byte was transmitted successfully.
+
+6. The master device will end the communication by allowing the pull-up resistor on SDA to get pulled back to HIGH in what is known as the **Stop Condition**.
+
+![alt text](../assets/3/i2c_frame.png)
 
 ## 10. CAN and CAN-FD
 
@@ -322,11 +430,3 @@ The arbitration, message id, and header, combined with the actual data of the CA
 ![alt text](../assets/3/CAN-FD-frame.png)
 
 This is where the actual difference between CAN and CAN-FD comes into play. CAN-FD (Flexible Data-rate) can specify how many bytes the message is going to be in its frame header, and can have up to 64 bytes of data per CAN frame/message. Normal CAN is maxed at 8 bytes and always sends 8 bytes. With normal CAN you can get bandwidth of up to 1mbit/sec whereas CAN-FD can get 5mbit/sec and even up to 8 with the right hardware. In DFR, we are moving to CAN-FD, as it is replacing standard CAN
-
-
-
-
-
-
-
-
