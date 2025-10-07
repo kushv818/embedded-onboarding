@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-void add_allocation(int size);
+void add_allocation(size_t size);
 void remove_allocation(int id);
 void print_allocations();
 

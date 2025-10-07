@@ -17,15 +17,27 @@ int allocation_count = 0;
 
 void add_allocation(size_t size) {
 
-    allocation_count++;
+    //temp size since allocation not guaranteed to succeed
+    size_t new_capacity = allocation_count + 1;
 
-    //reallocating memory for new allocation
-    allocation_array = realloc(allocation_array, sizeof(allocation_t) * (allocation_count));
+    //resizing array to hold new allocation
+    void* temp = realloc(allocation_array, sizeof(allocation_t) * new_capacity);
+    if (temp == NULL) {
+        printf("Memory allocation failed while adding allocation\n");
+        return;
+    }
 
-    //adding allocation to array
+    allocation_array = temp;
+
+    //zeroing out new allocation entry
     allocation_array[allocation_count - 1] = (allocation_t){0};
 
     void* allocation = malloc(size);
+    if (allocation == NULL) {
+        printf("Memory allocation failed for requested size %zu\n", size);
+        return;
+    }
+
     allocation_array[allocation_count - 1].id = generate_unique_id(); // need to implement this function
     allocation_array[allocation_count - 1].size = size;
     allocation_array[allocation_count - 1].addr = allocation;
