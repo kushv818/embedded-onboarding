@@ -41,14 +41,51 @@ void add_allocation(size_t size) {
     allocation_array[allocation_count - 1].id = generate_unique_id(); // need to implement this function
     allocation_array[allocation_count - 1].size = size;
     allocation_array[allocation_count - 1].addr = allocation;
-    
+
+    allocation_count++;
 }
 
 void remove_allocation(int id) {
     // Implementation of remove_allocation
+    if (allocation_array == NULL || allocation_count == 0) {
+        printf("No allocations to remove\n");
+        return;
+    }
 
+    for (int i =0; i< allocation_count; i++) {
+        if (allocation_array[i].id == id) {
+            //freeing memory
+            free(allocation_array[i].addr);
+
+            // Shift remaining allocations down
+            for (int j = i; j < allocation_count - 1; j++) {
+                allocation_array[j] = allocation_array[j + 1];
+            }
+            allocation_count--;
+            allocation_array = realloc(allocation_array, sizeof(allocation_t) * allocation_count);
+
+            // If no allocations left, free the array and set pointer to NULL
+            if (allocation_count == 0) {
+                free(allocation_array);
+                allocation_array = NULL;
+            }
+            printf("Allocation with ID %d removed\n", id);
+            return;
+        }
+    }
+    printf("Allocation with ID %d not found\n", id);
+    return;
 }
 
 void print_allocations() {
     // Implementation of print_allocations
+    if (allocation_array == NULL || allocation_count == 0) {
+        printf("No current allocations\n");
+        return;
+    }
+    printf("Current Allocations:\n");
+    for (int i = 0; i < allocation_count; i++) {
+        printf("ID: %d, Size: %zu, Address: %p\n", allocation_array[i].id, allocation_array[i].size, allocation_array[i].addr);
+    }
+    return;
 }
