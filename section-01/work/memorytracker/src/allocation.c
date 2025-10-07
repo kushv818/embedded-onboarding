@@ -1,4 +1,4 @@
-#include <allocation.h>
+#include "../inc/allocation.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -13,12 +13,17 @@ typedef struct {
 } allocation_t;
 
 static allocation_t* allocation_array = NULL;
-int allocation_count = 0;
+static int allocation_count = 0;
+static int current_id = 0;
+
+int generate_id() {
+    return ++current_id;
+}
 
 void add_allocation(size_t size) {
 
     //temp size since allocation not guaranteed to succeed
-    size_t new_capacity = allocation_count + 1;
+    int new_capacity = allocation_count + 1;
 
     //resizing array to hold new allocation
     void* temp = realloc(allocation_array, sizeof(allocation_t) * new_capacity);
@@ -27,22 +32,24 @@ void add_allocation(size_t size) {
         return;
     }
 
-    allocation_array = temp;
+    allocation_array = temp; // updated only if realloc succeeded
+    allocation_count = new_capacity; //since expansion succeeded
 
     //zeroing out new allocation entry
     allocation_array[allocation_count - 1] = (allocation_t){0};
 
+    //actually allocating memory
     void* allocation = malloc(size);
     if (allocation == NULL) {
         printf("Memory allocation failed for requested size %zu\n", size);
         return;
     }
 
-    allocation_array[allocation_count - 1].id = generate_unique_id(); // need to implement this function
+    allocation_array[allocation_count - 1].id = generate_id(); // need to implement this function
     allocation_array[allocation_count - 1].size = size;
     allocation_array[allocation_count - 1].addr = allocation;
 
-    allocation_count++;
+
 }
 
 void remove_allocation(int id) {
@@ -54,13 +61,15 @@ void remove_allocation(int id) {
 
     for (int i =0; i< allocation_count; i++) {
         if (allocation_array[i].id == id) {
-            //freeing memory
+            //freeing actual memory allocated
             free(allocation_array[i].addr);
 
             // Shift remaining allocations down
             for (int j = i; j < allocation_count - 1; j++) {
                 allocation_array[j] = allocation_array[j + 1];
             }
+
+            //reduce size of allocation array
             allocation_count--;
             allocation_array = realloc(allocation_array, sizeof(allocation_t) * allocation_count);
 
