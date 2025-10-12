@@ -50,6 +50,9 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init); // <----------------------------- Section 2, exercise 1
+void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState); // <----------- Section 2, exercise 1
+void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin); // <---------------------------------- Section 2, exercise 1
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -194,7 +197,7 @@ static void MX_GPIO_Init(void) {
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING; // binary number with different slices representing different things
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
@@ -210,6 +213,92 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
+
+
+void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init){
+  // The GPIO_InitTypeDef fed in the mx_GPIO_Init function only contains Pin, Mode, Pull, Speed parameters
+  // one pin at a time as well so while loop is not necessary here
+  uint32_t temp;
+  uint32_t pin = GPIO_Init->Pin;
+  uint32_t pin_index = ctz(pin); // count trailing zeros to get the index of the pin
+
+  //general variables from GPIO_InitTypeDef
+  uint32_t mode = GPIO_Init->Mode;
+  uint32_t pull = GPIO_Init->Pull;
+  uint32_t speed = GPIO_Init->Speed;
+
+  //decoding mode
+  pin_mode = (mode & GPIO_MODE) >> GPIO_MODE_Pos; // only keep gpio mode bits and shift to lsb
+  exti_mode = (mode & EXTI_MODE) >> EXTI_MODE_Pos; // only keep exti mode bits and shift to lsb
+  trigger_mode = (mode & TRIGGER_MODE) >> TRIGGER_MODE_Pos; // only keep trigger mode bits and shift to lsb
+  output_type = (mode & OUTPUT_TYPE) >> OUTPUT_TYPE_Pos; // only keep output type bits and shift to lsb
+
+  // configuring general registers
+  // MODER register
+  temp = GPIOx ->MODER;
+  temp &= ~(0x3u << (2 * pin_index)); // clear the 2 bits corresponding to the pin
+  temp |= (pin_mode << (2 * pin_index)); // set the 2 bits corresponding to the pin
+  GPIOx ->MODER = temp;
+
+  //PUPDR register
+  temp = GPIOx ->PUPDR;
+  temp &= ~(0x3u << (2 * pin_index));
+  temp |= (pull << (2 * pin_index));
+  GPIOx ->PUPDR = temp;
+
+  //mode specific configurations
+  if(pin_mode == MODE_OUTPUT){
+    //configure Output Type
+    temp = GPIOx ->OTYPER;
+    temp &= ~(0x1u << pin_index); // clear the bit corresponding to the pin
+    temp |= (output_type << pin_index); // set the bit corresponding to the pin
+    GPIOx ->OTYPER = temp;
+
+    //and configure Output Speed
+    temp = GPIOx ->OSPEEDR;
+    temp &= ~(0x3u << (2 * pin_index));
+    temp |= (speed << (2 * pin_index));
+    GPIOx ->OSPEEDR = temp;
+  }
+
+  if(pin_mode == MODE_INPUT){
+    //configure EXTI and trigger mode
+    if(exti_mode != 0){ // if exti mode is selected
+      //enable syscfg clock
+      __HAL_RCC_SYSCFG_CLK_ENABLE();
+
+      //find the correct EXTICR register and configure it to the right port
+      uint32_t position = pin_index / 4; // choosing the correct EXTICR register, since there are 4 registers for 16 pins
+      uint32_t shift = (pin_index % 4) * 4; // each exti register has 4 fields/slices of 4 bits each, choosing the correct slice
+      uint32_t port = GPIO_GET_INDEX(GPIOx); // getting the port index for the pin
+
+      //writing the port index to the correct slice after clearing it
+      SYSCFG->EXTICR[position] = (SYSCFG->EXTICR[position] & ~(0xFu << shift)) | (port << shift);
+
+      //configure EXTI IMR register and edge trigger registers
+      uint32_t bit = 1u << pin_index; // bit corresponding to the pin in the EXTI registers
+
+      // Falling-only:
+      EXTI->RTSR &= ~bit; // disable rising
+      EXTI->FTSR |=  bit; // enable falling
+
+      // Unmask interrupt:
+      EXTI->IMR |=  bit;
+
+      // Clear pending:
+      EXTI->PR =  bit;
+
+    }
+  }
+
+// in port gpiox, set pin gpio_pin to pinstate
+void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState){
+  
+}
+
+void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin){
+
+}
 
 /* USER CODE END 4 */
 
