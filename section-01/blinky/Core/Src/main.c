@@ -214,7 +214,7 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 
-
+// rewritten GPIO functions for exercise 1, a mix of generality and specificity
 void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init){
   // The GPIO_InitTypeDef fed in the mx_GPIO_Init function only contains Pin, Mode, Pull, Speed parameters
   // one pin at a time as well so while loop is not necessary here
@@ -291,13 +291,54 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init){
     }
   }
 
-// in port gpiox, set pin gpio_pin to pinstate
-void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState){
-  
+// more specific init function rewritten to make converting to assembly easier
+void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init){
+  uint32_t pin = GPIO_Init->Pin;
+
+  /* LED: PA5 → output, push-pull, low speed, no pull */
+  if (GPIOx == GPIOA && pin == GPIO_PIN_5) {
+    // program type/speed/pull first, then mode (glitch-safe)
+    GPIOA->OTYPER  &= ~(1u << 5);                    // push-pull
+    GPIOA->OSPEEDR &= ~(3u << (5u*2u));              // low speed
+    GPIOA->PUPDR   &= ~(3u << (5u*2u));              // no pull
+    GPIOA->MODER    = (GPIOA->MODER & ~(3u << (5u*2u))) | (1u << (5u*2u)); // 01 = output
+    return;
+  }
+
+  /* Button: PC13 → input, no pull, EXTI13 falling */
+  if (GPIOx == GPIOC && pin == GPIO_PIN_13) {
+    GPIOC->PUPDR &= ~(3u << (13u*2u));               // no pull
+    GPIOC->MODER &= ~(3u << (13u*2u));               // input
+
+    __HAL_RCC_SYSCFG_CLK_ENABLE();
+
+    // route EXTI13 to port C and configure falling edge
+    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGCOMPEN;        // enable SYSCFG
+    uint32_t b = 1u << 13;
+
+    EXTI->IMR  &= ~b;                                // mask first
+    SYSCFG->EXTICR[3] = (SYSCFG->EXTICR[3] & ~(0xFu << 4)) | (2u << 4); // PC = 2, pin13 slice
+    EXTI->RTSR &= ~b;                                 // rising off
+    EXTI->FTSR |=  b;                                 // falling on
+    EXTI->PR    =  b;                                 // clear pending
+    EXTI->IMR  |=  b;                                 // unmask
+    return;
+  }
 }
 
-void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin){
+// Rewritten GPIO function for exercise 1
+void HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState){
+  if (PinState != GPIO_PIN_RESET) {
+        GPIOx->ODR |=  (uint32_t)GPIO_Pin;
+  } else {
+        GPIOx->ODR &= ~(uint32_t)GPIO_Pin;
+  }
+}
 
+// Rewritten GPIO function for exercise 1
+void HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+{
+    GPIOx->ODR ^= (uint32_t)GPIO_Pin;
 }
 
 /* USER CODE END 4 */
