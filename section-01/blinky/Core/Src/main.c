@@ -110,7 +110,7 @@ int main(void) {
   /* USER CODE END 3 */
 }
 
-/**
+/**s
  * @brief System Clock Configuration
  * @retval None
  */
@@ -201,12 +201,14 @@ static void MX_GPIO_Init(void) {
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD2_Pin */
+  /* unused */
+  /*Configure GPIO pin : LD2_Pin 
   GPIO_InitStruct.Pin = LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+ */
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   /* USER CODE END MX_GPIO_Init_2 */
@@ -290,38 +292,20 @@ void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init){
 
     }
   }
+}
 
 // more specific init function rewritten to make converting to assembly easier
 void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init){
   uint32_t pin = GPIO_Init->Pin;
+  uint32_t pin_index = ctz(pin); // count trailing zeros to get the index of the pin
 
   /* LED: PA5 → output, push-pull, low speed, no pull */
   if (GPIOx == GPIOA && pin == GPIO_PIN_5) {
     // program type/speed/pull first, then mode (glitch-safe)
-    GPIOA->OTYPER  &= ~(1u << 5);                    // push-pull
-    GPIOA->OSPEEDR &= ~(3u << (5u*2u));              // low speed
-    GPIOA->PUPDR   &= ~(3u << (5u*2u));              // no pull
-    GPIOA->MODER    = (GPIOA->MODER & ~(3u << (5u*2u))) | (1u << (5u*2u)); // 01 = output
-    return;
-  }
-
-  /* Button: PC13 → input, no pull, EXTI13 falling */
-  if (GPIOx == GPIOC && pin == GPIO_PIN_13) {
-    GPIOC->PUPDR &= ~(3u << (13u*2u));               // no pull
-    GPIOC->MODER &= ~(3u << (13u*2u));               // input
-
-    __HAL_RCC_SYSCFG_CLK_ENABLE();
-
-    // route EXTI13 to port C and configure falling edge
-    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGCOMPEN;        // enable SYSCFG
-    uint32_t b = 1u << 13;
-
-    EXTI->IMR  &= ~b;                                // mask first
-    SYSCFG->EXTICR[3] = (SYSCFG->EXTICR[3] & ~(0xFu << 4)) | (2u << 4); // PC = 2, pin13 slice
-    EXTI->RTSR &= ~b;                                 // rising off
-    EXTI->FTSR |=  b;                                 // falling on
-    EXTI->PR    =  b;                                 // clear pending
-    EXTI->IMR  |=  b;                                 // unmask
+    GPIOA->OTYPER  &= ~(1u << pin_index);                    // push-pull
+    GPIOA->OSPEEDR &= ~(3u << (pin_index*2u));              // low speed
+    GPIOA->PUPDR   &= ~(3u << (pin_index*2u));              // no pull
+    GPIOA->MODER    = (GPIOA->MODER & ~(3u << (pin_index*2u))) | (1u << (pin_index*2u)); // 01 = output
     return;
   }
 }

@@ -14,5 +14,6 @@ and complicated if I had to deal with all the EXTI registers as well. This great
 down to bitwise operations. If i had used my initially written init function the assembly would have been at least 2-3 hundred lines of code.
 
 Section 2 Exercise 3:
+Before starting this Exercise I ended up learning all of this information in the first exercise since dealing with EXTI was part of the
 
 Section 2 Exercise 4:
